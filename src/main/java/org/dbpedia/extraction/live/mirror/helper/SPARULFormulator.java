@@ -1,9 +1,7 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.dbpedia.extraction.live.mirror.connection.JDBC;
+import org.dbpedia.extraction.live.mirror.sparul.*;
 
 import java.io.*;
 import java.sql.PreparedStatement;
@@ -22,6 +20,10 @@ import java.util.Set;
 public class SPARULFormulator {
 
     private static Logger logger  = Logger.getLogger(SPARULFormulator.class);
+
+    private static SPARULExecutor sparulExecutor = new SPARULVosExecutor();
+
+    private static SPARULGenerator sparulGenerator = new SPARULGenerator(Global.options.get("graphURI"));
 
     /**
      * Inserts the triples stored in the passed file into Virtuoso store
@@ -89,18 +91,15 @@ public class SPARULFormulator {
     }
 
     private static boolean insert(String pattern) {
-        String sparul = "INSERT IN GRAPH <" + Global.options.get("graphURI") + "> { \n  " + pattern + "}";
-//            String sparul = "INSERT IN GRAPH <http://dbpedia.org> \n" +
-//                    "\n" +
-//                    "{ <http://dbpedia.org/resource/Johann_Gottfried_Galle> <http://dbpedia.org/property/wikilink> \"Hello\" } ";
-
-        JDBC jdbc = JDBC.getDefaultConnection();
-
-        String virtuosoPl = "sparql " + sparul + "";
-
-        //jdbc.exec(virtuosoPl);
-        PreparedStatement stmt = jdbc.prepare(virtuosoPl);
-        return jdbc.executeStatement(stmt, new String[]{});
+        String sparul = sparulGenerator.insert(pattern);
+        try {
+            sparulExecutor.executeSPARUL(sparul);
+        } catch (SPARULException e) {
+            // TODO fix
+            logger.warn("Error in query execution: ", e);
+            return false;
+        }
+        return true;
     }
 
 
@@ -165,20 +164,15 @@ public class SPARULFormulator {
     }
 
     private static boolean delete(String pattern) {
-        String sparul = "DELETE FROM <" + Global.options.get("graphURI") + "> { \n  " + pattern
-                +" }" + " WHERE {\n" +  pattern + " }";
+        String sparul = sparulGenerator.delete(pattern);
 
-//            String sparul = "INSERT IN GRAPH <" + Global.options.get("graphURI") + "> { \n  " + pattern + "}";
-//            String sparul = "INSERT IN GRAPH <http://dbpedia.org> \n" +
-//                    "\n" +
-//                    "{ <http://dbpedia.org/resource/Johann_Gottfried_Galle> <http://dbpedia.org/property/wikilink> \"Hello\" } ";
-
-        JDBC jdbc = JDBC.getDefaultConnection();
-
-        String virtuosoPl = "sparql " + sparul + "";
-
-        PreparedStatement stmt = jdbc.prepare(virtuosoPl);
-        return jdbc.executeStatement(stmt, new String[]{});
+        try {
+            sparulExecutor.executeSPARUL(sparul);
+        } catch (SPARULException e) {
+            logger.warn("Error in query execution: ", e);
+            return false;
+        }
+        return true;
     }
 
     /**
