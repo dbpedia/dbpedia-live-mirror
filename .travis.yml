@@ -4,6 +4,7 @@ jdk:
 branches:
   only:
     - master
+    - dev
 install: /bin/true
 script: "mvn clean install"
 notifications:
