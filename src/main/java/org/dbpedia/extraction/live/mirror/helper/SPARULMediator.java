@@ -36,7 +36,7 @@ public class SPARULMediator {
 
 
         try{
-            List<String> triples = Utils.getLinesFromFile(filename);
+            List<String> triples = Utils.getTriplesFromFile(filename);
             String pattern = Utils.generateStringFromList(triples, "\n");
 
 
@@ -101,7 +101,7 @@ public class SPARULMediator {
     public static boolean deleteFromGraph(String filename, boolean deleteNTriplesFile){
 
         try{
-            List<String> triples = Utils.getLinesFromFile(filename);
+            List<String> triples = Utils.getTriplesFromFile(filename);
             //String pattern = Utils.generateStringFromList(triples, "\n");
 
             //pattern = stripDuplicateTriples(pattern);

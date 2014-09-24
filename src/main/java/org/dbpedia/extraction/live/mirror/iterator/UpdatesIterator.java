@@ -22,7 +22,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
     private static Logger logger = LoggerFactory.getLogger(UpdatesIterator.class);
     private int delay;
 
-    DownloadTimeCounter counter;
+    private final DownloadTimeCounter counter;
 
     /**
      * Initializes UpdatesIterator object
@@ -30,6 +30,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
      * @param delayInterval Interval to wait in case there is no new items available (in seconds)
      */
     public UpdatesIterator(DownloadTimeCounter startingCounter, int delayInterval){
+
         counter = new DownloadTimeCounter(startingCounter.year, startingCounter.month, startingCounter.day,
                 startingCounter.hour, startingCounter.counter);
 

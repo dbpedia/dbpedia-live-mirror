@@ -22,14 +22,14 @@ public final class Utils {
 
     private Utils() {}
 
-    public static List<String> getLinesFromFile(String filename) {
+    public static List<String> getTriplesFromFile(String filename) {
         List<String> lines = new ArrayList<>();
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"))) {
 
             String line = null;
-            while ((line = in.readLine()) != null) {
-
+            while ((line = in.readLine().trim()) != null) {
+                if (line.isEmpty())
                 lines.add(line.trim());
 
             }
@@ -40,6 +40,8 @@ public final class Utils {
             throw new IllegalArgumentException("UnsupportedEncodingException: ", e);
         } catch (IOException e) {
             throw new IllegalArgumentException("IOException in file " + filename, e);
+        } catch (NullPointerException e) {
+            throw new IllegalArgumentException("Cannot read file " + filename, e);
         }
 
         return lines;
@@ -87,9 +89,16 @@ public final class Utils {
              FileOutputStream outstream = new FileOutputStream(outFilename);
              byte[] buf = new byte[1024];
              int len;
-             while ((len = gInStream.read(buf)) > 0)
-            {
-              outstream.write(buf, 0, len);
+
+            // if the stream is empty just write an empty file
+            if (gInStream.available() == 0) {
+                String dummyContent = "# empty stream ";
+                outstream.write(dummyContent.getBytes());
+            }
+            else {
+                while ((len = gInStream.read(buf)) > 0) {
+                    outstream.write(buf, 0, len);
+                }
             }
             logger.info("File : " + filename +" decompressed successfully to " + outFilename);
             gInStream.close();
