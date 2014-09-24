@@ -29,7 +29,7 @@ public class Global {
             logger.info("Options file read successfully");
         }
         catch (Exception exp){
-            logger.error("Options file cannot be read, download process cannot continue");
+            logger.error("Options file cannot be read, download process cannot continue", exp);
             System.exit(0);
         }
     }

@@ -35,7 +35,7 @@ public class LastDownloadDateManager {
 
         }
         catch(Exception exp){
-           logger.warn("Last updates download date cannot be read due to " + exp.getMessage());
+           logger.warn("Last updates download date cannot be read due to " + exp.getMessage(), exp);
             exp.printStackTrace();
         }
         finally {
@@ -45,7 +45,7 @@ public class LastDownloadDateManager {
 
             }
             catch (Exception exp){
-                logger.warn("File " + strFileName + " cannot be closed due to " + exp.getMessage());
+                logger.warn("File " + strFileName + " cannot be closed due to " + exp.getMessage(), exp);
             }
 
         }
@@ -66,7 +66,7 @@ public class LastDownloadDateManager {
             osWriter.flush();
         }
         catch(Exception exp){
-           logger.warn("Last download date cannot be written to file : " + strLastResponseDate + ", due to " + exp);
+           logger.warn("Last download date cannot be written to file : " + strLastResponseDate + ", due to " + exp, exp);
         }
         finally {
             try{
@@ -77,7 +77,7 @@ public class LastDownloadDateManager {
                     fsLastResponseDateFile.close();
             }
             catch (Exception exp){
-                logger.warn("File " + strFileName + " cannot be closed due to " + exp.getMessage());
+                logger.warn("File " + strFileName + " cannot be closed due to " + exp.getMessage(), exp);
             }
         }
     }

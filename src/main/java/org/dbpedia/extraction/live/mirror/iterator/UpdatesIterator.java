@@ -84,7 +84,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
 
             }
             catch(Exception exp){
-               logger.warn("Last publish date file cannot be read due to " + exp.getMessage());
+               logger.warn("Last publish date file cannot be read due to " + exp.getMessage(), exp);
                 exp.printStackTrace();
             }
             finally {
@@ -94,7 +94,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
 
                 }
                 catch (Exception exp){
-                    logger.warn("File " + lastPublishFile + " cannot be closed due to " + exp.getMessage());
+                    logger.warn("File " + lastPublishFile + " cannot be closed due to " + exp.getMessage(), exp);
                 }
 
             }

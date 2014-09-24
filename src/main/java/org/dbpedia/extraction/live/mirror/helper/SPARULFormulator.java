@@ -82,7 +82,7 @@ public class SPARULFormulator {
             return successfulInsertion;
 
         }catch (Exception e){//Catch exception if any
-            logger.error("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage(), e);
             return false;
         }
 
@@ -158,7 +158,7 @@ public class SPARULFormulator {
             return successfulDeletion;
 
         }catch (Exception e){//Catch exception if any
-            logger.error("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage(), e);
             return false;
         }
 

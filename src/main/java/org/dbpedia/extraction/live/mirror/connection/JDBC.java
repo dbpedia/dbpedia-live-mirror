@@ -85,12 +85,12 @@ public class JDBC{
         }
         catch(ClassNotFoundException exp)
         {
-           logger.fatal("JDBC driver of Virtuoso cannot be loaded");
+           logger.fatal("JDBC driver of Virtuoso cannot be loaded", exp);
            System.exit(1);
         }
         catch(Exception exp)
         {
-             logger.warn(exp.getMessage() + " Function connect ");
+             logger.warn(exp.getMessage() + " Function connect ", exp);
         }
     }
 
@@ -135,7 +135,7 @@ public class JDBC{
             //con.close();
         }
         catch(Exception exp){
-            logger.warn(exp.getMessage() + " Function executeStatement ");
+            logger.warn(exp.getMessage() + " Function executeStatement ", exp);
             successfulExecution = false;
         }
 
@@ -162,7 +162,7 @@ public class JDBC{
         catch(Exception exp)
         {
 
-            logger.warn(exp.getMessage() + " Function executeStatement ");
+            logger.warn(exp.getMessage() + " Function executeStatement ", exp);
         }
 
         return result;

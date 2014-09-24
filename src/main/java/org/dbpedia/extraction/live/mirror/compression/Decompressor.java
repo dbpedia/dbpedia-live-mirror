@@ -64,7 +64,7 @@ public class Decompressor {
             //out.write(new FileInputStream(tarOutputFilename).)
         }
         catch(IOException exp){
-            logger.error("File: " + filename + " cannot be compressed");
+            logger.error("File: " + filename + " cannot be compressed", exp);
         }
 
     }*/
@@ -101,7 +101,7 @@ public class Decompressor {
 //            return outFilename;
         }
         catch(IOException ioe){
-            logger.warn("File " + filename + " cannot be decompressed due to " + ioe.getMessage());
+            logger.warn("File " + filename + " cannot be decompressed due to " + ioe.getMessage(), ioe);
             outFilename = "";
         }
         finally {
