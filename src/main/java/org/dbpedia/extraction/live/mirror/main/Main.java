@@ -10,6 +10,7 @@ import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.LastDownloadDateManager;
 import org.dbpedia.extraction.live.mirror.helper.SPARULFormulator;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
+import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 
 
 /**
@@ -97,6 +98,8 @@ public class Main {
             LastDownloadDateManager.writeLastDownloadDate("lastDownloadDate.dat", cntr.toString());
 
         }
+
+        JDBCPoolConnection.shutdown();
 
    }  // end of main
 

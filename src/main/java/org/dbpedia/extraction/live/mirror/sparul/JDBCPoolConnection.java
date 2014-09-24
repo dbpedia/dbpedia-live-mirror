@@ -8,15 +8,25 @@ import org.dbpedia.extraction.live.mirror.helper.Global;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Manipulates a JDBC Connection pool to BoneCP
+ */
 public final class JDBCPoolConnection {
     //Initializing the Logger
     private static Logger logger = Logger.getLogger(JDBCPoolConnection.class);
 
     private static volatile BoneCP connectionPool = null;
 
+    /**
+     * Instantiates a new JDBC pool connection.
+     */
     protected JDBCPoolConnection() {
     }
 
+    /**
+     * Initializes the pool from a property file
+     * (need to move `Globals` out of here)
+     */
     private static void initConnection() {
 
         try {
@@ -33,6 +43,12 @@ public final class JDBCPoolConnection {
     }
 
 
+    /**
+     * Gets a connection from the pool
+     *
+     * @return a connection
+     * @throws SQLException the sQL exception
+     */
     public static Connection getPoolConnection() throws SQLException {
         if (connectionPool == null) {
             synchronized (JDBCPoolConnection.class) {
@@ -45,6 +61,9 @@ public final class JDBCPoolConnection {
     }
 
 
+    /**
+     * Shutdown the connection pool.
+     */
     public static void shutdown() {
         if (connectionPool != null) {
             try {
