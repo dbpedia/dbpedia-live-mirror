@@ -21,13 +21,7 @@ import java.util.Set;
  */
 public class SPARULFormulator {
 
-    private static Logger logger;
-
-    static {
-        //Initialize logger
-        logger = Logger.getLogger(SPARULFormulator.class);
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-    }
+    private static Logger logger  = Logger.getLogger(SPARULFormulator.class);
 
     /**
      * Inserts the triples stored in the passed file into Virtuoso store
