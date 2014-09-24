@@ -1,11 +1,9 @@
 package org.dbpedia.extraction.live.mirror.main;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
+import org.slf4j.Logger;
 
 
 /**
@@ -19,7 +17,7 @@ import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 public class Main {
 
 
-    private static Logger logger;
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
 
     public static void main (String[] args) {
         boolean deleteFiles = false;
@@ -27,8 +25,7 @@ public class Main {
                         (Global.options.get("deleteFilesAfterCompletion").compareTo("") != 0))
             deleteFiles = Boolean.parseBoolean(Global.options.get("deleteFilesAfterCompletion"));
         //Initialize logger
-        logger = Logger.getLogger(Main.class);
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
+
 
         DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate("lastDownloadDate.dat");
 
@@ -64,7 +61,10 @@ public class Main {
                 String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
 
                 //Delete triples from Virtuoso graph
-                SPARULMediator.deleteFromGraph(decompressedDeletedNTriplesFile, deleteFiles);
+                boolean delSuccess = SPARULMediator.deleteFromGraph(decompressedDeletedNTriplesFile, deleteFiles);
+                if (delSuccess) {
+                    logger.info("Successfully applied DEL patch " + decompressedDeletedNTriplesFile);
+                }
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.numberOfSuccessiveFailedTrails = 0;
@@ -77,7 +77,10 @@ public class Main {
                 String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
 
                 //Insert triples into Virtuoso graph
-                SPARULMediator.insertIntoGraph(decompressedAddedNTriplesFile, deleteFiles);
+                boolean addSuccess = SPARULMediator.insertIntoGraph(decompressedAddedNTriplesFile, deleteFiles);
+                if (addSuccess) {
+                    logger.info("Successfully applied ADD patch " + decompressedAddedNTriplesFile);
+                }
 //                SPARULFormulator.deleteFromGraph(decompressedAddedNTriplesFile, true);
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully

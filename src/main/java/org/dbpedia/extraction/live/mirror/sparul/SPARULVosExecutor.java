@@ -1,6 +1,7 @@
 package org.dbpedia.extraction.live.mirror.sparul;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ import java.sql.Statement;
  */
 public class SPARULVosExecutor implements SPARULExecutor {
 
-    private static final Logger logger  = Logger.getLogger(SPARULVosExecutor.class);
+    private static final Logger logger  = LoggerFactory.getLogger(SPARULVosExecutor.class);
 
     public SPARULVosExecutor(){}
 

@@ -1,6 +1,7 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,7 +17,7 @@ import java.io.OutputStreamWriter;
  */
 public class LastDownloadDateManager {
 
-    private static Logger logger = Logger.getLogger(LastDownloadDateManager.class);
+    private static Logger logger = LoggerFactory.getLogger(LastDownloadDateManager.class);
 
     
     public static DownloadTimeCounter getLastDownloadDate(String strFileName)

@@ -1,6 +1,7 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -17,7 +18,7 @@ import java.util.zip.GZIPInputStream;
  */
 public final class Utils {
 
-    private static Logger logger = Logger.getLogger(Utils.class);
+    private static Logger logger = LoggerFactory.getLogger(Utils.class);
 
     private Utils() {}
 

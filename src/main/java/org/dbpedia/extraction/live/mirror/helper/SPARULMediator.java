@@ -1,6 +1,7 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dbpedia.extraction.live.mirror.sparul.*;
 
 import java.util.Arrays;
@@ -18,7 +19,7 @@ import java.util.Set;
  */
 public class SPARULMediator {
 
-    private static final Logger logger  = Logger.getLogger(SPARULMediator.class);
+    private static final Logger logger  = LoggerFactory.getLogger(SPARULMediator.class);
 
     private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
 

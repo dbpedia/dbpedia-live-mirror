@@ -2,8 +2,9 @@ package org.dbpedia.extraction.live.mirror.sparul;
 
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
-import org.apache.log4j.Logger;
 import org.dbpedia.extraction.live.mirror.helper.Global;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
  */
 public final class JDBCPoolConnection {
     //Initializing the Logger
-    private static final Logger logger = Logger.getLogger(JDBCPoolConnection.class);
+    private static final Logger logger = LoggerFactory.getLogger(JDBCPoolConnection.class);
 
     private static volatile BoneCP connectionPool = null;
 
@@ -37,7 +38,7 @@ public final class JDBCPoolConnection {
             config.setPassword(Global.options.get("Store.pw"));
             connectionPool = new BoneCP(config); // setup the connection pool
         } catch (Exception e) {
-            logger.fatal("Could not initialize Triple-Store connection! Exiting...");
+            logger.error("Could not initialize Triple-Store connection! Exiting...");
             System.exit(1);
         }
     }

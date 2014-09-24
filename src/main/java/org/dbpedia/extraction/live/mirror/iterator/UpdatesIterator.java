@@ -1,6 +1,7 @@
 package org.dbpedia.extraction.live.mirror.iterator;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.dbpedia.extraction.live.mirror.helper.DownloadTimeCounter;
 import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.Utils;
@@ -18,7 +19,7 @@ import java.util.Iterator;
  */
 public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
 
-    private static Logger logger = Logger.getLogger(UpdatesIterator.class);
+    private static Logger logger = LoggerFactory.getLogger(UpdatesIterator.class);
     private int delay;
 
     DownloadTimeCounter counter;

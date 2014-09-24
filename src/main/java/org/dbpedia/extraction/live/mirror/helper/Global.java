@@ -1,8 +1,7 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ini4j.Options;
 
 import java.io.File;
@@ -19,7 +18,7 @@ public class Global {
     public static Options options;
     public static int numberOfSuccessiveFailedTrails = 0;
 
-    private static Logger logger = Logger.getLogger(Global.class);
+    private static Logger logger = LoggerFactory.getLogger(Global.class);
 
     static {
         try{
