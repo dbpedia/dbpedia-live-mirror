@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public final class JDBCPoolConnection {
     //Initializing the Logger
-    private static Logger logger = Logger.getLogger(JDBCPoolConnection.class);
+    private static final Logger logger = Logger.getLogger(JDBCPoolConnection.class);
 
     private static volatile BoneCP connectionPool = null;
 

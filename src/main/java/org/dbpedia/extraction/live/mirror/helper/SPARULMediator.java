@@ -3,7 +3,6 @@ package org.dbpedia.extraction.live.mirror.helper;
 import org.apache.log4j.Logger;
 import org.dbpedia.extraction.live.mirror.sparul.*;
 
-import java.io.*;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,11 +18,11 @@ import java.util.Set;
  */
 public class SPARULMediator {
 
-    private static Logger logger  = Logger.getLogger(SPARULMediator.class);
+    private static final Logger logger  = Logger.getLogger(SPARULMediator.class);
 
-    private static SPARULExecutor sparulExecutor = new SPARULVosExecutor();
+    private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
 
-    private static SPARULGenerator sparulGenerator = new SPARULGenerator(Global.options.get("graphURI"));
+    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.options.get("graphURI"));
 
     /**
      * Inserts the triples stored in the passed file into Virtuoso store
@@ -41,7 +40,7 @@ public class SPARULMediator {
 
 
             //First try to insert all triples at once
-            boolean successfulInsertion = insert(pattern.toString());
+            boolean successfulInsertion = insert(pattern);
 
             //If the insertion was not successful, then we should divide the pattern into chunks of 100 triples each
             if(!successfulInsertion){
@@ -102,9 +101,9 @@ public class SPARULMediator {
 
         try{
             List<String> triples = Utils.getLinesFromFile(filename);
-            String pattern = Utils.generateStringFromList(triples, "\n");
+            //String pattern = Utils.generateStringFromList(triples, "\n");
 
-            pattern = stripDuplicateTriples(pattern);
+            //pattern = stripDuplicateTriples(pattern);
 
             //boolean successfulDeletion = delete(pattern);
 
@@ -156,7 +155,7 @@ public class SPARULMediator {
             return "";
 
         StringBuilder result = new StringBuilder();
-        Set<String> uniqueLines = new LinkedHashSet<String>();
+        Set<String> uniqueLines = new LinkedHashSet<>();
 
         String[] chunks = triplesToClean.split("\n");
         uniqueLines.addAll(Arrays.asList(chunks));
