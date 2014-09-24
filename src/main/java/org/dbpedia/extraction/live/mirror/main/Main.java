@@ -3,12 +3,8 @@ package org.dbpedia.extraction.live.mirror.main;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
-import org.dbpedia.extraction.live.mirror.compression.Decompressor;
 import org.dbpedia.extraction.live.mirror.download.FileDownloader;
-import org.dbpedia.extraction.live.mirror.helper.DownloadTimeCounter;
-import org.dbpedia.extraction.live.mirror.helper.Global;
-import org.dbpedia.extraction.live.mirror.helper.LastDownloadDateManager;
-import org.dbpedia.extraction.live.mirror.helper.SPARULMediator;
+import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 
@@ -66,7 +62,7 @@ public class Main {
 
             if(deletedCompressedDownloadedFile.compareTo("") != 0){
 //                Decompressor.decompressGZipFile(deletedCompressedDownloadedFile, true);
-                String decompressedDeletedNTriplesFile = Decompressor.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
+                String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
 
                 //Delete triples from Virtuoso graph
                 SPARULMediator.deleteFromGraph(decompressedDeletedNTriplesFile, deleteFiles);
@@ -79,7 +75,7 @@ public class Main {
             String addedCompressedDownloadedFile = FileDownloader.downloadFile(addedTriplesFilename,
                     Global.options.get("UpdatesDownloadFolder"));
             if(addedCompressedDownloadedFile.compareTo("") != 0){
-                String decompressedAddedNTriplesFile = Decompressor.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
+                String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
 
                 //Insert triples into Virtuoso graph
                 SPARULMediator.insertIntoGraph(decompressedAddedNTriplesFile, deleteFiles);

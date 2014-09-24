@@ -65,8 +65,10 @@ public class SPARULMediator {
                 successfulInsertion = insert(tripleChunk.toString());
             }
 
-            if(deleteNTriplesFile)
-                (new File(filename)).delete();
+            if(deleteNTriplesFile) {
+                Utils.deleteFile(filename);
+            }
+
 
             return successfulInsertion;
 
@@ -118,8 +120,9 @@ public class SPARULMediator {
             //Insert the remaining triples, as the number of triples may not be divisible by 100
 
 
-            if(deleteNTriplesFile)
-                (new File(filename)).delete();
+            if(deleteNTriplesFile) {
+                Utils.deleteFile(filename);
+            }
 
             return successfulDeletion;
 
