@@ -3,7 +3,6 @@ package org.dbpedia.extraction.live.mirror.main;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
-import org.dbpedia.extraction.live.mirror.download.FileDownloader;
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
@@ -57,7 +56,7 @@ public class Main {
                                    Global.options.get("removedTriplesFileExtension");
 
             //Download and decompress the file of deleted triples
-            String deletedCompressedDownloadedFile = FileDownloader.downloadFile(deletedTriplesFilename,
+            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename,
                     Global.options.get("UpdatesDownloadFolder"));
 
             if(deletedCompressedDownloadedFile.compareTo("") != 0){
@@ -72,7 +71,7 @@ public class Main {
             }
 
             //Download and decompress the file of added triples
-            String addedCompressedDownloadedFile = FileDownloader.downloadFile(addedTriplesFilename,
+            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename,
                     Global.options.get("UpdatesDownloadFolder"));
             if(addedCompressedDownloadedFile.compareTo("") != 0){
                 String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);

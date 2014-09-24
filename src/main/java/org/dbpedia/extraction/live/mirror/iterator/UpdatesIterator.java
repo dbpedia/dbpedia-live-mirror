@@ -1,11 +1,9 @@
 package org.dbpedia.extraction.live.mirror.iterator;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
-import org.dbpedia.extraction.live.mirror.download.FileDownloader;
 import org.dbpedia.extraction.live.mirror.helper.DownloadTimeCounter;
 import org.dbpedia.extraction.live.mirror.helper.Global;
+import org.dbpedia.extraction.live.mirror.helper.Utils;
 
 import java.io.FileInputStream;
 import java.util.Calendar;
@@ -45,7 +43,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
 
         while (true){
             String lastPublishFile = Global.options.get("UpdateServerAddress") + Global.options.get("lastPublishedFilename");
-            FileDownloader.downloadFile(lastPublishFile, Global.options.get("UpdatesDownloadFolder"));
+            Utils.downloadFile(lastPublishFile, Global.options.get("UpdatesDownloadFolder"));
 
 
             String strLastPublishDate = "";
