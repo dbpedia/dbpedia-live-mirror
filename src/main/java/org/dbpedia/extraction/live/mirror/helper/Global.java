@@ -23,7 +23,7 @@ public class Global {
 
     static {
         try{
-            Global.options = new Options(new File("dbpedia_updates_downloader.ini"));
+            Global.options = new Options(new File("mirror-live.ini"));
             logger.info("Options file read successfully");
         }
         catch (Exception exp){
