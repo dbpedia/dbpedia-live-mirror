@@ -4,9 +4,9 @@ import org.apache.log4j.Logger;
 import org.dbpedia.extraction.live.mirror.sparul.*;
 
 import java.io.*;
-import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,9 +17,9 @@ import java.util.Set;
  * Formulates SPARUL insert and delete statements based on data stored in files that were downloaded from DBpedia-Live
  * server.
  */
-public class SPARULFormulator {
+public class SPARULMediator {
 
-    private static Logger logger  = Logger.getLogger(SPARULFormulator.class);
+    private static Logger logger  = Logger.getLogger(SPARULMediator.class);
 
     private static SPARULExecutor sparulExecutor = new SPARULVosExecutor();
 
@@ -33,28 +33,15 @@ public class SPARULFormulator {
      */
     public static boolean insertIntoGraph(String filename, boolean deleteNTriplesFile){
 
-        String pattern = "";
+
 
         try{
-            // Open the file that is the first
-            // command line parameter
-            FileInputStream fstream = new FileInputStream(filename);
-            // Get the object of DataInputStream
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String strLine;
-            //Read File Line By Line
-            while ((strLine = br.readLine()) != null)   {
+            List<String> triples = Utils.getLinesFromFile(filename);
+            String pattern = Utils.generateStringFromList(triples, "\n");
 
-                //read a Triple from file
-                pattern += strLine + "\n";
-
-            }
-            //Close the input stream
-            in.close();
 
             //First try to insert all triples at once
-            boolean successfulInsertion = insert(pattern);
+            boolean successfulInsertion = insert(pattern.toString());
 
             //If the insertion was not successful, then we should divide the pattern into chunks of 100 triples each
             if(!successfulInsertion){
@@ -111,27 +98,9 @@ public class SPARULFormulator {
      */
     public static boolean deleteFromGraph(String filename, boolean deleteNTriplesFile){
 
-        //String sparul = "DELETE FROM <" + Global.options.get("graphURI") + "> { \n  " +   " }" + " WHERE {\n" +  " }";
-
-        String pattern = "";
-
         try{
-            // Open the file that is the first
-            // command line parameter
-            FileInputStream fstream = new FileInputStream(filename);
-            // Get the object of DataInputStream
-            DataInputStream in = new DataInputStream(fstream);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
-            String strLine;
-            //Read File Line By Line
-            while ((strLine = br.readLine()) != null)   {
-
-                //read a Triple from file
-                pattern += strLine + "\n";
-
-            }
-            //Close the input stream
-            in.close();
+            List<String> triples = Utils.getLinesFromFile(filename);
+            String pattern = Utils.generateStringFromList(triples, "\n");
 
             pattern = stripDuplicateTriples(pattern);
 
@@ -139,13 +108,11 @@ public class SPARULFormulator {
 
             //For the deletion operation, we should delete triple by triple, as if one of the triples that must be deleted
             //is not there (for any reason) the whole deletion process will fail
-            String []tripleLines = pattern.split("\n");
 
             boolean successfulDeletion = false;
 
-            StringBuilder tripleChunk = new StringBuilder();
-            for(int i = 0; i < tripleLines.length; i++){
-                successfulDeletion = delete(tripleLines[i]);
+            for(String triple: triples){
+                successfulDeletion = delete(triple);
             }
 
             //Insert the remaining triples, as the number of triples may not be divisible by 100

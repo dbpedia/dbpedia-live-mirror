@@ -8,7 +8,7 @@ import org.dbpedia.extraction.live.mirror.download.FileDownloader;
 import org.dbpedia.extraction.live.mirror.helper.DownloadTimeCounter;
 import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.LastDownloadDateManager;
-import org.dbpedia.extraction.live.mirror.helper.SPARULFormulator;
+import org.dbpedia.extraction.live.mirror.helper.SPARULMediator;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 
@@ -69,7 +69,7 @@ public class Main {
                 String decompressedDeletedNTriplesFile = Decompressor.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
 
                 //Delete triples from Virtuoso graph
-                SPARULFormulator.deleteFromGraph(decompressedDeletedNTriplesFile, deleteFiles);
+                SPARULMediator.deleteFromGraph(decompressedDeletedNTriplesFile, deleteFiles);
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.numberOfSuccessiveFailedTrails = 0;
@@ -82,7 +82,7 @@ public class Main {
                 String decompressedAddedNTriplesFile = Decompressor.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
 
                 //Insert triples into Virtuoso graph
-                SPARULFormulator.insertIntoGraph(decompressedAddedNTriplesFile, deleteFiles);
+                SPARULMediator.insertIntoGraph(decompressedAddedNTriplesFile, deleteFiles);
 //                SPARULFormulator.deleteFromGraph(decompressedAddedNTriplesFile, true);
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
