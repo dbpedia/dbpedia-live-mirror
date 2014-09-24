@@ -1,8 +1,6 @@
-package org.dbpedia.extraction.live.mirror.connection;
+package org.dbpedia.extraction.live.mirror.sparul;
 
-import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Logger;
-import org.apache.log4j.SimpleLayout;
 import org.dbpedia.extraction.live.mirror.helper.Global;
 
 import java.sql.*;
@@ -57,7 +55,7 @@ public class JDBC{
     {
         try{
             //Make sure that the JDBC driver for virtuoso exists
-            Class.forName("virtuoso.jdbc4.Driver");
+            Class.forName(Global.options.get("Store.class"));
 
 
             boolean FailedOnce = false;
