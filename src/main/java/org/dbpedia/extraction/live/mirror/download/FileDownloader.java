@@ -17,12 +17,8 @@ import java.net.URL;
  */
 public class FileDownloader {
 
-    private static Logger logger;
-    static {
-        //Initialize logger
-        logger = Logger.getLogger(FileDownloader.class);
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-    }
+    private static Logger logger  = Logger.getLogger(FileDownloader.class);
+
     /**
      * Downloads the file with passed URL to the passed folder
      * @param fileURL   URL of the file that should be downloaded

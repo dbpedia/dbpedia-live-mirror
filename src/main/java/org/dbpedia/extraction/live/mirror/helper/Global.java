@@ -19,12 +19,10 @@ public class Global {
     public static Options options;
     public static int numberOfSuccessiveFailedTrails = 0;
 
-    private static Logger logger;
+    private static Logger logger = Logger.getLogger(Global.class);
 
     static {
         try{
-            logger = Logger.getLogger(Global.class);
-            logger.addAppender(new ConsoleAppender(new SimpleLayout()));
             Global.options = new Options(new File("dbpedia_updates_downloader.ini"));
             logger.info("Options file read successfully");
         }

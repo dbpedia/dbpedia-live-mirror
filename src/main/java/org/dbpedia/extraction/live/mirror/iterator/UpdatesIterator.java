@@ -23,12 +23,6 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter>{
     private static Logger logger = Logger.getLogger(UpdatesIterator.class);
     private int delay;
 
-    static {
-        //Initialize logger
-        //logger = Logger.getLogger(FileDownloader.class);
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-    }
-
     DownloadTimeCounter counter;
 
     /**

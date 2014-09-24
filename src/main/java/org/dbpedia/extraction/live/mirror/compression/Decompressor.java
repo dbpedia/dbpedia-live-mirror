@@ -20,12 +20,7 @@ import java.util.zip.GZIPInputStream;
  */
 public class Decompressor {
 
-    private static Logger logger;
-
-    static {
-        logger = Logger.getLogger(Decompressor.class);
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-    }
+    private static Logger logger = Logger.getLogger(Decompressor.class);
 
     /*private void compressFileUsingGZip(String filename){
 

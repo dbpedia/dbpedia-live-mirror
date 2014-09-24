@@ -29,11 +29,6 @@ public class JDBC{
     final int wait = 5;
     final int cutstring = 1000;
 
-    static {
-        logger = Logger.getLogger(JDBC.class);
-        logger.addAppender(new ConsoleAppender(new SimpleLayout()));
-    }
-
     public JDBC(String DSN, String USER, String Password)
     {
         this.dsn = DSN;
