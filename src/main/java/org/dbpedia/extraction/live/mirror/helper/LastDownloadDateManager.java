@@ -35,8 +35,7 @@ public class LastDownloadDateManager {
 
         }
         catch(Exception exp){
-           logger.warn("Last updates download date cannot be read due to " + exp.getMessage(), exp);
-            exp.printStackTrace();
+            throw new RuntimeException("Cannot read latest download date", exp);
         }
         finally {
             try{
