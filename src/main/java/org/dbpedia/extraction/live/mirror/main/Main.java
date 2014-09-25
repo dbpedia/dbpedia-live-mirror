@@ -65,6 +65,9 @@ public class Main {
                 if (delSuccess) {
                     logger.info("Successfully applied DEL patch " + decompressedDeletedNTriplesFile);
                 }
+                else {
+                    logger.error("Error in applying DEL patch " + decompressedDeletedNTriplesFile);
+                }
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.numberOfSuccessiveFailedTrails = 0;
@@ -80,6 +83,9 @@ public class Main {
                 boolean addSuccess = SPARULMediator.insertIntoGraph(decompressedAddedNTriplesFile, deleteFiles);
                 if (addSuccess) {
                     logger.info("Successfully applied ADD patch " + decompressedAddedNTriplesFile);
+                }
+                else {
+                    logger.error("Error in applying ADD patch " + decompressedAddedNTriplesFile);
                 }
 //                SPARULFormulator.deleteFromGraph(decompressedAddedNTriplesFile, true);
 
