@@ -111,7 +111,7 @@ public class SPARULMediator {
             //For the deletion operation, we should delete triple by triple, as if one of the triples that must be deleted
             //is not there (for any reason) the whole deletion process will fail
 
-            boolean successfulDeletion = false;
+            boolean successfulDeletion = true;
 
             for(String triple: triples){
                 successfulDeletion = delete(triple);
