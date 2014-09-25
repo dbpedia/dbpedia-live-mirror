@@ -1,5 +1,6 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +29,11 @@ public final class Utils {
         try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"))) {
 
             String line = null;
-            while ((line = in.readLine().trim()) != null) {
-                if (line.isEmpty())
-                lines.add(line.trim());
+            while ((line = in.readLine()) != null) {
+                if (!line.trim().isEmpty())
+                    lines.add(line.trim());
 
             }
-
         } catch (FileNotFoundException e) {
             throw new IllegalArgumentException("File " + filename + " not fount!", e);
         } catch (UnsupportedEncodingException e) {
@@ -78,34 +78,31 @@ public final class Utils {
     public static String decompressGZipFile(String filename, boolean deleteCompressedFile){
 
         String outFilename = "" ;
+        //The output filename is the same as input filename without last .gz
+        int lastDotPosition = filename.lastIndexOf(".");
+        outFilename = filename.substring(0, lastDotPosition);
 
-        try{
-            //The output filename is the same as input filename without last .gz
-            int lastDotPosition = filename.lastIndexOf(".");
-            outFilename = filename.substring(0, lastDotPosition);
+        try (
+                FileInputStream fis = new FileInputStream(filename);
+                //GzipCompressorInputStream(
+                GZIPInputStream gis = new GZIPInputStream(fis);
+                InputStreamReader isr = new InputStreamReader(gis,  "UTF8");
+                BufferedReader in = new BufferedReader(isr);
+                OutputStreamWriter out = new OutputStreamWriter (new FileOutputStream(outFilename), "UTF8");
+        )
+        {
 
-             FileInputStream inStream = new FileInputStream(filename);
-             GZIPInputStream gInStream =new GZIPInputStream(inStream);
-             FileOutputStream outstream = new FileOutputStream(outFilename);
-             byte[] buf = new byte[1024];
-             int len;
 
-            // if the stream is empty just write an empty file
-            if (gInStream.available() == 0) {
-                String dummyContent = "# empty stream ";
-                outstream.write(dummyContent.getBytes());
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                out.write(line + "\n");
+
             }
-            else {
-                while ((len = gInStream.read(buf)) > 0) {
-                    outstream.write(buf, 0, len);
-                }
-            }
+
             logger.info("File : " + filename +" decompressed successfully to " + outFilename);
-            gInStream.close();
-            outstream.close();
-
-
-//            return outFilename;
+        } catch (EOFException e) {
+            // probably Wrong compression, write dummy empty file
+           logger.error("EOFException in compressed file: " + filename + " - Trying to recover");
         }
         catch(IOException ioe){
             logger.warn("File " + filename + " cannot be decompressed due to " + ioe.getMessage(), ioe);
@@ -196,7 +193,7 @@ public final class Utils {
                 output.write(dis.readByte());
              }
 
-            logger.info("File : " + fileURL + " has been successfully downloaded");
+            logger.debug("File : " + fileURL + " has been successfully downloaded");
 
           } catch (MalformedURLException mue) {
 
