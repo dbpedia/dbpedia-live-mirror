@@ -39,10 +39,17 @@ public class SPARULVosExecutor implements SPARULExecutor {
         try {
             execSQL(query);
         } catch (Exception e) {
+
+            String expMessage = e.toString();
+            // This means that VOS is probably down
+            if (expMessage.contains("Broken pipe") || expMessage.contains("Virtuoso Communications Link Failure")) {
+                logger.error("Virtuoso is probably down, exiting...", e);
+                System.exit(1);
+            }
             //When Virtuoso commits a CHECKPOINT we fail to insert anything
             //and get a Transaction deadlock exception
             //here we lock everything and try X attempts every Y seconds
-            if (e.toString().contains("Transaction deadlock")) {
+            if (expMessage.contains("Transaction deadlock")) {
                 synchronized (SPARULVosExecutor.class) {
                     //The checkpoint lasts around 2-3 minutes
                     int attempts = 10;
