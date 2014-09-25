@@ -57,10 +57,9 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
     @Override
     public String toString() {
-        String formattedDate = this.year + "-" + String.format("%02d", this.month) + "-" + String.format("%02d", this.day)
+        return this.year + "-" + String.format("%02d", this.month) + "-" + String.format("%02d", this.day)
                 + "-" + String.format("%02d", this.hour) + "-" + String.format("%06d", this.counter);
 
-        return formattedDate;
     }
 
     /**
@@ -70,9 +69,8 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
      */
     public String getFormattedFilePath() {
 
-        String formattedPath = this.year + "/" + String.format("%02d", this.month) + "/" + String.format("%02d", this.day)
+        return this.year + "/" + String.format("%02d", this.month) + "/" + String.format("%02d", this.day)
                 + "/" + String.format("%02d", this.hour) + "/" + String.format("%06d", this.counter);
-        return formattedPath;
     }
 
 
@@ -137,7 +135,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     }
 
     private enum Fields {
-        YEAR, MONTH, DAY, HOUR, COUNTER;
+        YEAR, MONTH, DAY, HOUR, COUNTER
     }
 
     /**

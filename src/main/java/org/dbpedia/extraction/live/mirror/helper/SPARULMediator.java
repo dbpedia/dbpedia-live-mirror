@@ -75,10 +75,10 @@ public class SPARULMediator {
         }
 
 
-        return result;
+        return false;
     }
 
-    private static <T extends Object> Collection<Collection<T>> splitCollection(Collection<T> collection, int chunks) {
+    private static <T> Collection<Collection<T>> splitCollection(Collection<T> collection, int chunks) {
         ArrayList<Collection<T>> lists = new ArrayList<>();
         for (int i = 0; i < chunks; i++) {
             lists.add(new ArrayList<T>());

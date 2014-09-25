@@ -19,8 +19,8 @@ public final class Changeset {
         this.id = id;
 
         // Keep the changeset unique
-        this.additions = Collections.unmodifiableCollection(new LinkedHashSet<String>(additions));
-        this.deletions = Collections.unmodifiableCollection(new LinkedHashSet<String>(deletions));
+        this.additions = Collections.unmodifiableCollection(new LinkedHashSet<>(additions));
+        this.deletions = Collections.unmodifiableCollection(new LinkedHashSet<>(deletions));
     }
 
     public String getId() {

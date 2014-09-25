@@ -46,7 +46,7 @@ public class Main {
             //String compressedDownloadedFile = FileDownloader.downloadFile(options.get("UpdateServerAddress") + "2011/05/22/00/000001.added.nt.gz",
             //         options.get("UpdatesDownloadFolder"));
 
-            String addedTriplesFilename = "", deletedTriplesFilename = "";
+            String addedTriplesFilename, deletedTriplesFilename;
 
             addedTriplesFilename = Global.options.get("UpdateServerAddress") + cntr.getFormattedFilePath() +
                     Global.options.get("addedTriplesFileExtension");
