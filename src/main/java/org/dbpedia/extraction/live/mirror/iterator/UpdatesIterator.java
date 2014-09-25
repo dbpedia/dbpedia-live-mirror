@@ -19,8 +19,8 @@ import java.util.Iterator;
  */
 public class UpdatesIterator implements Iterator<DownloadTimeCounter> {
 
-    private static Logger logger = LoggerFactory.getLogger(UpdatesIterator.class);
-    private int delay;
+    private static final Logger logger = LoggerFactory.getLogger(UpdatesIterator.class);
+    private final int delay;
 
     private final DownloadTimeCounter counter;
 

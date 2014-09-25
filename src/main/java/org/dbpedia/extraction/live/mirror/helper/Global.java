@@ -18,7 +18,7 @@ public class Global {
     public static Options options;
     public static int numberOfSuccessiveFailedTrails = 0;
 
-    private static Logger logger = LoggerFactory.getLogger(Global.class);
+    private static final Logger logger = LoggerFactory.getLogger(Global.class);
 
     static {
         try {

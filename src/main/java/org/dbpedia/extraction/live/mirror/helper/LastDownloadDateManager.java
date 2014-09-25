@@ -17,7 +17,7 @@ import java.io.OutputStreamWriter;
  */
 public class LastDownloadDateManager {
 
-    private static Logger logger = LoggerFactory.getLogger(LastDownloadDateManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(LastDownloadDateManager.class);
 
 
     public static DownloadTimeCounter getLastDownloadDate(String strFileName) {

@@ -21,7 +21,7 @@ import java.util.zip.GZIPInputStream;
  */
 public final class Utils {
 
-    private static Logger logger = LoggerFactory.getLogger(Utils.class);
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     private Utils() {
     }

@@ -21,7 +21,7 @@ public final class JDBCPoolConnection {
     /**
      * Instantiates a new JDBC pool connection.
      */
-    protected JDBCPoolConnection() {
+    private JDBCPoolConnection() {
     }
 
     /**
