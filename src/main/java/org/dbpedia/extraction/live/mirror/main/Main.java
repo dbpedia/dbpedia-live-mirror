@@ -16,16 +16,18 @@ import java.util.List;
  * This class is originally created from class defined in http://www.devdaily.com/java/edu/pj/pj010011
  * which is created by http://www.DevDaily.com
  */
-public class Main {
+public final class Main {
 
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
 
+    private Main(){}
+
     public static void main(String[] args) {
         boolean deleteFiles = false;
-        if ((Global.options.get("deleteFilesAfterCompletion") != null) &&
-                (Global.options.get("deleteFilesAfterCompletion").compareTo("") != 0))
-            deleteFiles = Boolean.parseBoolean(Global.options.get("deleteFilesAfterCompletion"));
+        if ((Global.getOptions().get("deleteFilesAfterCompletion") != null) &&
+                (Global.getOptions().get("deleteFilesAfterCompletion").compareTo("") != 0))
+            deleteFiles = Boolean.parseBoolean(Global.getOptions().get("deleteFilesAfterCompletion"));
         //Initialize logger
 
 
@@ -33,6 +35,7 @@ public class Main {
 
 
         UpdatesIterator iterator = new UpdatesIterator(lastDownload, 3);
+
         while (iterator.hasNext()) {
             DownloadTimeCounter cntr = iterator.next();
 
@@ -48,18 +51,18 @@ public class Main {
 
             String addedTriplesFilename, deletedTriplesFilename;
 
-            addedTriplesFilename = Global.options.get("UpdateServerAddress") + cntr.getFormattedFilePath() +
-                    Global.options.get("addedTriplesFileExtension");
+            addedTriplesFilename = Global.getOptions().get("UpdateServerAddress") + cntr.getFormattedFilePath() +
+                    Global.getOptions().get("addedTriplesFileExtension");
 
-            deletedTriplesFilename = Global.options.get("UpdateServerAddress") + cntr.getFormattedFilePath() +
-                    Global.options.get("removedTriplesFileExtension");
+            deletedTriplesFilename = Global.getOptions().get("UpdateServerAddress") + cntr.getFormattedFilePath() +
+                    Global.getOptions().get("removedTriplesFileExtension");
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
             List<String> triplesToAdd = Arrays.asList();
 
             //Download and decompress the file of deleted triples
-            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename, Global.options.get("UpdatesDownloadFolder"));
+            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename, Global.getOptions().get("UpdatesDownloadFolder"));
 
             if (deletedCompressedDownloadedFile.compareTo("") != 0) {
 
@@ -70,11 +73,11 @@ public class Main {
                 }
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
-                Global.numberOfSuccessiveFailedTrails = 0;
+                Global.setNumberOfSuccessiveFailedTrails(0);
             }
 
             //Download and decompress the file of added triples
-            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, Global.options.get("UpdatesDownloadFolder"));
+            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, Global.getOptions().get("UpdatesDownloadFolder"));
 
             if (addedCompressedDownloadedFile.compareTo("") != 0) {
                 String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
@@ -84,7 +87,7 @@ public class Main {
                 }
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
-                Global.numberOfSuccessiveFailedTrails = 0;
+                Global.setNumberOfSuccessiveFailedTrails(0);
             }
 
             Changeset changeset = new Changeset(cntr.toString(), triplesToAdd, triplesToDelete);
@@ -93,7 +96,7 @@ public class Main {
 
             //No files with that sequence so that indicates a failed trail, so we increment the counter of unsuccessful queries
             if ((addedCompressedDownloadedFile.compareTo("") == 0) && (deletedCompressedDownloadedFile.compareTo("") == 0)) {
-                Global.numberOfSuccessiveFailedTrails++;
+                Global.setNumberOfSuccessiveFailedTrails(Global.getNumberOfSuccessiveFailedTrails() + 1);
             }
             LastDownloadDateManager.writeLastDownloadDate("lastDownloadDate.dat", cntr.toString());
 

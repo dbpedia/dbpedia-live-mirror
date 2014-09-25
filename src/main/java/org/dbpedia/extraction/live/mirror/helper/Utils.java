@@ -47,8 +47,6 @@ public final class Utils {
             throw new IllegalArgumentException("UnsupportedEncodingException: ", e);
         } catch (IOException e) {
             throw new IllegalArgumentException("IOException in file " + filename, e);
-        } catch (NullPointerException e) {
-            throw new IllegalArgumentException("Cannot read file " + filename, e);
         }
 
         return lines;
@@ -87,7 +85,7 @@ public final class Utils {
 
         String outFilename;
         //The output filename is the same as input filename without last .gz
-        int lastDotPosition = filename.lastIndexOf(".");
+        int lastDotPosition = filename.lastIndexOf('.');
         outFilename = filename.substring(0, lastDotPosition);
 
         try (
@@ -113,8 +111,9 @@ public final class Utils {
             logger.warn("File " + filename + " cannot be decompressed due to " + ioe.getMessage(), ioe);
             outFilename = "";
         } finally {
-            if (deleteCompressedFile)
-                (new File(filename)).delete();
+            if (deleteCompressedFile) {
+                Utils.deleteFile(filename);
+            }
         }
         return outFilename;
     }
@@ -130,9 +129,10 @@ public final class Utils {
     public static String downloadFile(String fileURL, String folderPath) {
 
         //Extract filename only without full path
-        int lastSlashPos = fileURL.lastIndexOf("/");
-        if (lastSlashPos < 0)
+        int lastSlashPos = fileURL.lastIndexOf('/');
+        if (lastSlashPos < 0) {
             return "";
+        }
 
         String fullFileName = folderPath + fileURL.substring(lastSlashPos + 1);
 

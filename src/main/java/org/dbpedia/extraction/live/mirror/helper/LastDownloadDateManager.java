@@ -15,10 +15,11 @@ import java.io.OutputStreamWriter;
  * This class is responsible for reading and writing the response dates to files, in order to enable resume starting
  * from the last working point both for live extraction and for mapping update
  */
-public class LastDownloadDateManager {
+public final class LastDownloadDateManager {
 
     private static final Logger logger = LoggerFactory.getLogger(LastDownloadDateManager.class);
 
+    private LastDownloadDateManager() {}
 
     public static DownloadTimeCounter getLastDownloadDate(String strFileName) {
         String strLastResponseDate = null;
@@ -29,8 +30,9 @@ public class LastDownloadDateManager {
 
             int ch;
             strLastResponseDate = "";
-            while ((ch = fsLastResponseDateFile.read()) != -1)
+            while ((ch = fsLastResponseDateFile.read()) != -1) {
                 strLastResponseDate += (char) ch;
+            }
 
 
         } catch (Exception exp) {

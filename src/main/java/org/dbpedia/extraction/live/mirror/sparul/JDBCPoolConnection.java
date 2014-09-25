@@ -16,7 +16,7 @@ public final class JDBCPoolConnection {
     //Initializing the Logger
     private static final Logger logger = LoggerFactory.getLogger(JDBCPoolConnection.class);
 
-    private static volatile BoneCP connectionPool = null;
+    private static volatile BoneCP connectionPool;
 
     /**
      * Instantiates a new JDBC pool connection.
@@ -32,10 +32,10 @@ public final class JDBCPoolConnection {
 
         try {
             BoneCPConfig config = new BoneCPConfig();
-            Class.forName(Global.options.get("Store.class"));
-            config.setJdbcUrl(Global.options.get("Store.dsn"));
-            config.setUsername(Global.options.get("Store.user"));
-            config.setPassword(Global.options.get("Store.pw"));
+            Class.forName(Global.getOptions().get("Store.class"));
+            config.setJdbcUrl(Global.getOptions().get("Store.dsn"));
+            config.setUsername(Global.getOptions().get("Store.user"));
+            config.setPassword(Global.getOptions().get("Store.pw"));
             connectionPool = new BoneCP(config); // setup the connection pool
         } catch (Exception e) {
             logger.error("Could not initialize Triple-Store connection! Exiting...");

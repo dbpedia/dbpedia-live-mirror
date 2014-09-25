@@ -13,10 +13,10 @@ import java.io.File;
  * Time: 7:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class Global {
+public final class Global {
 
-    public static Options options;
-    public static int numberOfSuccessiveFailedTrails = 0;
+    private static Options options;
+    private static int numberOfSuccessiveFailedTrails;
 
     private static final Logger logger = LoggerFactory.getLogger(Global.class);
 
@@ -30,4 +30,21 @@ public class Global {
         }
     }
 
+    private Global(){}
+
+    public static Options getOptions() {
+        return options;
+    }
+
+    public static void setOptions(Options options) {
+        Global.options = options;
+    }
+
+    public static int getNumberOfSuccessiveFailedTrails() {
+        return numberOfSuccessiveFailedTrails;
+    }
+
+    public static void setNumberOfSuccessiveFailedTrails(int numberOfSuccessiveFailedTrails) {
+        Global.numberOfSuccessiveFailedTrails = numberOfSuccessiveFailedTrails;
+    }
 }

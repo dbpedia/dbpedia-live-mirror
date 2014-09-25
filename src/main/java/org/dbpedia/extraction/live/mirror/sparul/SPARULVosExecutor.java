@@ -68,7 +68,7 @@ public class SPARULVosExecutor implements SPARULExecutor {
         }
     }
 
-    private static void execSQL(String query) throws Exception {
+    private static void execSQL(String query) throws SPARULException {
 
         Connection conn = null;
         Statement stmt = null;
@@ -83,20 +83,23 @@ public class SPARULVosExecutor implements SPARULExecutor {
 
         } finally {
             try {
-                if (result != null)
+                if (result != null) {
                     result.close();
+                }
             } catch (Exception e) {
                 logger.warn("Cannot close ResultSet", e);
             }
             try {
-                if (stmt != null)
+                if (stmt != null) {
                     stmt.close();
+                }
             } catch (Exception e) {
                 logger.warn("Cannot close Statement", e);
             }
             try {
-                if (conn != null)
+                if (conn != null) {
                     conn.close();
+                }
             } catch (Exception e) {
                 logger.warn("Cannot close Connection", e);
             }

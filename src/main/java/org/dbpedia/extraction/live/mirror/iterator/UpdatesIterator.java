@@ -44,21 +44,22 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter> {
         //cal.setTime(new Date(111,5,1));
 
         while (true) {
-            String lastPublishFile = Global.options.get("UpdateServerAddress") + Global.options.get("lastPublishedFilename");
-            Utils.downloadFile(lastPublishFile, Global.options.get("UpdatesDownloadFolder"));
+            String lastPublishFile = Global.getOptions().get("UpdateServerAddress") + Global.getOptions().get("lastPublishedFilename");
+            Utils.downloadFile(lastPublishFile, Global.getOptions().get("UpdatesDownloadFolder"));
 
 
             String strLastPublishDate = "";
             FileInputStream fsLastResponseDateFile = null;
 
             try {
-                fsLastResponseDateFile = new FileInputStream(Global.options.get("UpdatesDownloadFolder") +
-                        Global.options.get("lastPublishedFilename"));
+                fsLastResponseDateFile = new FileInputStream(Global.getOptions().get("UpdatesDownloadFolder") +
+                        Global.getOptions().get("lastPublishedFilename"));
 
                 int ch;
                 strLastPublishDate = "";
-                while ((ch = fsLastResponseDateFile.read()) != -1)
+                while ((ch = fsLastResponseDateFile.read()) != -1) {
                     strLastPublishDate += (char) ch;
+                }
 
                 DownloadTimeCounter lastPublishCounter = new DownloadTimeCounter(strLastPublishDate);
 

@@ -18,16 +18,17 @@ import java.util.Collection;
  * Formulates SPARUL insert and delete statements based on data stored in files that were downloaded from DBpedia-Live
  * server.
  */
-public class SPARULMediator {
+public final class SPARULMediator {
 
     private static final Logger logger = LoggerFactory.getLogger(SPARULMediator.class);
 
     private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
 
-    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.options.get("graphURI"));
+    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.getOptions().get("graphURI"));
 
     private enum Action {ADD, DELETE}
 
+    private SPARULMediator(){}
 
     public static void applyChangeset(Changeset changeset) {
 
@@ -53,8 +54,9 @@ public class SPARULMediator {
 
         boolean result = executeSparulWrapper(sparul);
 
-        if (result == true)
+        if (result == true) {
             return true;
+        }
 
         // if only 1 triple just log and return
         if (triples.size() == 1) {

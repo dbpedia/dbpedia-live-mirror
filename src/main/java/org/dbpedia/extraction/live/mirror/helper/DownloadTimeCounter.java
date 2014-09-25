@@ -145,13 +145,13 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
      */
     public boolean advance() {
 
-        int maximumNumberOfSuccessiveFailedTrials = Integer.parseInt(Global.options.get("MaximumNumberOfSuccessiveFailedTrials"));
+        int maximumNumberOfSuccessiveFailedTrials = Integer.parseInt(Global.getOptions().get("MaximumNumberOfSuccessiveFailedTrials"));
 
         //If the number of successive trials exceeds maximumNumberOfSuccessiveFailedTrials, then this indicates that no
         // more files exist in that folder, and we should advance hour with one, so we move onto another folder,
         //and we should also reset counter
-        if (Global.numberOfSuccessiveFailedTrails >= maximumNumberOfSuccessiveFailedTrials) {
-            Global.numberOfSuccessiveFailedTrails = 0;
+        if (Global.getNumberOfSuccessiveFailedTrails() >= maximumNumberOfSuccessiveFailedTrials) {
+            Global.setNumberOfSuccessiveFailedTrails(0);
             return advanceHour();
         }
         counter++;
