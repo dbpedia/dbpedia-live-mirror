@@ -15,17 +15,17 @@ import java.sql.Statement;
  */
 public class SPARULVosExecutor implements SPARULExecutor {
 
-    private static final Logger logger  = LoggerFactory.getLogger(SPARULVosExecutor.class);
+    private static final Logger logger = LoggerFactory.getLogger(SPARULVosExecutor.class);
 
-    public SPARULVosExecutor(){}
+    public SPARULVosExecutor() {
+    }
 
     @Override
     public void executeSPARUL(String sparulQuery) throws SPARULException {
 
         if (sparulQuery.startsWith("SPARQL ")) {
             execSQLWrapper(sparulQuery);
-        }
-        else {
+        } else {
             execSQLWrapper("SPARQL " + sparulQuery);
         }
     }
@@ -35,7 +35,7 @@ public class SPARULVosExecutor implements SPARULExecutor {
     * Execs an SQL query and returns true if everything went ok or false  in case of exception
     * */
 
-    private void execSQLWrapper(String query) throws SPARULException  {
+    private void execSQLWrapper(String query) throws SPARULException {
         try {
             execSQL(query);
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class SPARULVosExecutor implements SPARULExecutor {
                     //The checkpoint lasts around 2-3 minutes
                     int attempts = 10;
                     int sleep = 30000;
-                    for (int i = 1; i<attempts; i++) {
+                    for (int i = 1; i < attempts; i++) {
                         try {
                             logger.warn("Transaction Deadlock, retrying query: " + i + "/" + attempts);
                             execSQL(query);

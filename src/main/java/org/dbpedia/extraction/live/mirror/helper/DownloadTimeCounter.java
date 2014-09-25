@@ -21,7 +21,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     public int hour;
     public int counter;
 
-    public DownloadTimeCounter(int year, int month, int day, int hour, int counter){
+    public DownloadTimeCounter(int year, int month, int day, int hour, int counter) {
         this.year = year;
         this.month = month;
         this.day = day;
@@ -31,11 +31,12 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
     /**
      * Constructs DownloadTimeCounter object from a string by splitting it using the hyphen "-"
-     * @param fullTimeString    String containing full time path i.e. Year-Month-Day-Hour-Counter
+     *
+     * @param fullTimeString String containing full time path i.e. Year-Month-Day-Hour-Counter
      */
-    public DownloadTimeCounter(String fullTimeString){
-        try{
-            String []dateParts = fullTimeString.split("-");
+    public DownloadTimeCounter(String fullTimeString) {
+        try {
+            String[] dateParts = fullTimeString.split("-");
             this.year = Integer.parseInt(dateParts[0]);
             this.month = Integer.parseInt(dateParts[1]);
             this.day = Integer.parseInt(dateParts[2]);
@@ -43,11 +44,11 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
             this.counter = Integer.parseInt(dateParts[4]);
         }
         //If any error occurs, then we set it with current date
-        catch (Exception exp){
+        catch (Exception exp) {
 
             Calendar cal = Calendar.getInstance();
             this.year = cal.get(Calendar.YEAR);
-            this.month = cal.get(Calendar.MONTH) + 1 ;
+            this.month = cal.get(Calendar.MONTH) + 1;
             this.day = cal.get(Calendar.DAY_OF_MONTH);
             this.hour = cal.get(Calendar.HOUR_OF_DAY);
             this.counter = 0;
@@ -55,50 +56,51 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     }
 
     @Override
-    public String toString(){
-        String formattedDate = this.year + "-" + String.format("%02d",this.month) + "-" + String.format("%02d",this.day)
-                + "-" + String.format("%02d",this.hour) + "-" + String.format("%06d", this.counter);
+    public String toString() {
+        String formattedDate = this.year + "-" + String.format("%02d", this.month) + "-" + String.format("%02d", this.day)
+                + "-" + String.format("%02d", this.hour) + "-" + String.format("%06d", this.counter);
 
         return formattedDate;
     }
 
     /**
      * Formats the instance in folder path format, i.e. Year/Month/Day/Hour/Counter
-     * @return  String formatted with Year/Month/Day/Hour/Counter
+     *
+     * @return String formatted with Year/Month/Day/Hour/Counter
      */
-    public String getFormattedFilePath(){
+    public String getFormattedFilePath() {
 
-        String formattedPath = this.year + "/" + String.format("%02d",this.month) + "/" + String.format("%02d",this.day)
-                + "/" + String.format("%02d",this.hour) + "/" + String.format("%06d", this.counter);
+        String formattedPath = this.year + "/" + String.format("%02d", this.month) + "/" + String.format("%02d", this.day)
+                + "/" + String.format("%02d", this.hour) + "/" + String.format("%06d", this.counter);
         return formattedPath;
     }
 
 
-    public int compareTo(DownloadTimeCounter cntr){
+    public int compareTo(DownloadTimeCounter cntr) {
         int comparisonResult = compareField(cntr, Fields.YEAR);
-        if(comparisonResult != 0)
+        if (comparisonResult != 0)
             return comparisonResult;
-        else{
+        else {
             comparisonResult = compareField(cntr, Fields.MONTH);
 
-            if(comparisonResult != 0)
+            if (comparisonResult != 0)
                 return comparisonResult;
 
-            else{
+            else {
                 comparisonResult = compareField(cntr, Fields.DAY);
 
-                if(comparisonResult != 0)
+                if (comparisonResult != 0)
                     return comparisonResult;
 
-                else{
+                else {
                     comparisonResult = compareField(cntr, Fields.HOUR);
 
-                    if(comparisonResult != 0)
+                    if (comparisonResult != 0)
                         return comparisonResult;
 
-                    else{
+                    else {
                         comparisonResult = compareField(cntr, Fields.COUNTER);
-                            return comparisonResult;
+                        return comparisonResult;
                     }
 
                 }
@@ -109,46 +111,48 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
     /**
      * Compares a specific field, e.g. year, month, ... and returns the result of comparison -1, 0, 1
-     * @return  -1 if the filed of current instances is less than that of the passed instance,
-     *          1 if it is bigger, and 0 otherwise
+     *
+     * @return -1 if the filed of current instances is less than that of the passed instance,
+     * 1 if it is bigger, and 0 otherwise
      */
-    private int compareField(DownloadTimeCounter cntr, Fields field){
-        switch (field){
+    private int compareField(DownloadTimeCounter cntr, Fields field) {
+        switch (field) {
             case YEAR:
-                    return Integer.valueOf(year).compareTo(cntr.year);
+                return Integer.valueOf(year).compareTo(cntr.year);
 //                break;
             case MONTH:
-                    return Integer.valueOf(month).compareTo(cntr.month);
+                return Integer.valueOf(month).compareTo(cntr.month);
 //                break;
             case DAY:
-                    return Integer.valueOf(day).compareTo(cntr.day);
+                return Integer.valueOf(day).compareTo(cntr.day);
 //                break;
             case HOUR:
-                    return Integer.valueOf(hour).compareTo(cntr.hour);
+                return Integer.valueOf(hour).compareTo(cntr.hour);
 //                break;
             case COUNTER:
-                    return Integer.valueOf(counter).compareTo(cntr.counter);
+                return Integer.valueOf(counter).compareTo(cntr.counter);
 //                break;
         }
         return 0;
     }
 
-    private enum Fields{
+    private enum Fields {
         YEAR, MONTH, DAY, HOUR, COUNTER;
     }
 
     /**
      * Advances to the next available step
-     * @return  True if it advances successfully, false otherwise
+     *
+     * @return True if it advances successfully, false otherwise
      */
-    public boolean advance(){
+    public boolean advance() {
 
         int maximumNumberOfSuccessiveFailedTrials = Integer.parseInt(Global.options.get("MaximumNumberOfSuccessiveFailedTrials"));
 
         //If the number of successive trials exceeds maximumNumberOfSuccessiveFailedTrials, then this indicates that no
         // more files exist in that folder, and we should advance hour with one, so we move onto another folder,
         //and we should also reset counter
-        if(Global.numberOfSuccessiveFailedTrails >= maximumNumberOfSuccessiveFailedTrials){
+        if (Global.numberOfSuccessiveFailedTrails >= maximumNumberOfSuccessiveFailedTrials) {
             Global.numberOfSuccessiveFailedTrails = 0;
             return advanceHour();
         }
@@ -159,10 +163,10 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
     private boolean advanceHour() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH");
-        String dateSting = this.year + "-" + String.format("%02d",this.month) + "-" + String.format("%02d",this.day)
+        String dateSting = this.year + "-" + String.format("%02d", this.month) + "-" + String.format("%02d", this.day)
                 + "-" + String.format("%02d", this.hour);
 
-        try{
+        try {
             Date dt = formatter.parse(dateSting);
             Calendar cal = Calendar.getInstance();
             cal.setTime(dt);
@@ -170,12 +174,11 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
             this.year = cal.get(Calendar.YEAR);
             this.month = cal.get(Calendar.MONTH) + 1;
-            this.day = cal.get(Calendar.DAY_OF_MONTH) ;
+            this.day = cal.get(Calendar.DAY_OF_MONTH);
             this.hour = cal.get(Calendar.HOUR_OF_DAY);
             this.counter = 0;
             return true;
-        }
-        catch (ParseException exp){
+        } catch (ParseException exp) {
             return false;
         }
     }

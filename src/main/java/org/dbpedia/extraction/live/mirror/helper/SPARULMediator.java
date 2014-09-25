@@ -1,10 +1,14 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
+import org.dbpedia.extraction.live.mirror.sparul.SPARULException;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULExecutor;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.dbpedia.extraction.live.mirror.sparul.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,13 +20,13 @@ import java.util.*;
  */
 public class SPARULMediator {
 
-    private static final Logger logger  = LoggerFactory.getLogger(SPARULMediator.class);
+    private static final Logger logger = LoggerFactory.getLogger(SPARULMediator.class);
 
     private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
 
     private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.options.get("graphURI"));
 
-    private enum Action {ADD, DELETE};
+    private enum Action {ADD, DELETE}
 
 
     public static void applyChangeset(Changeset changeset) {
@@ -66,7 +70,7 @@ public class SPARULMediator {
         logger.warn("Tried to " + action.toString() + " " + triples.size() + " but failed, splitting into chunks to spot the error");
         // Split collection and retry
         // In the end we will go to one (or more) single problematic triples, log it (previous block) and finish
-        for (Collection<String> subList: splitCollection(triples, 5)) {
+        for (Collection<String> subList : splitCollection(triples, 5)) {
             executeAction(subList, action);
         }
 
@@ -97,7 +101,6 @@ public class SPARULMediator {
         }
         return true;
     }
-
 
 
 }

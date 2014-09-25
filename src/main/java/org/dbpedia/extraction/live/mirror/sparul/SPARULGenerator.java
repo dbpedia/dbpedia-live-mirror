@@ -8,6 +8,7 @@ package org.dbpedia.extraction.live.mirror.sparul;
  */
 public class SPARULGenerator {
     private final String graph;
+
     public SPARULGenerator(String graph) {
         this.graph = graph;
 

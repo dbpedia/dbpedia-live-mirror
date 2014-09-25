@@ -14,17 +14,17 @@ import java.util.List;
  * Date: 5/24/11
  * Time: 4:26 PM
  * This class is originally created from class defined in http://www.devdaily.com/java/edu/pj/pj010011
- *  which is created by http://www.DevDaily.com
+ * which is created by http://www.DevDaily.com
  */
 public class Main {
 
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
 
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         boolean deleteFiles = false;
-        if((Global.options.get("deleteFilesAfterCompletion") != null) &&
-                        (Global.options.get("deleteFilesAfterCompletion").compareTo("") != 0))
+        if ((Global.options.get("deleteFilesAfterCompletion") != null) &&
+                (Global.options.get("deleteFilesAfterCompletion").compareTo("") != 0))
             deleteFiles = Boolean.parseBoolean(Global.options.get("deleteFilesAfterCompletion"));
         //Initialize logger
 
@@ -33,12 +33,12 @@ public class Main {
 
 
         UpdatesIterator iterator = new UpdatesIterator(lastDownload, 3);
-        while(iterator.hasNext()){
+        while (iterator.hasNext()) {
             DownloadTimeCounter cntr = iterator.next();
 
             //Since next returns null, if now new updates are available, then we should not go any further,
             //and just wait for mor updates
-            if(cntr == null)
+            if (cntr == null)
                 continue;
 
             //u = new URL("http://dbpedia.aksw.org/updates.live.dbpedia.org/2011/05/22/00/000001.added.nt.gz");
@@ -49,23 +49,23 @@ public class Main {
             String addedTriplesFilename = "", deletedTriplesFilename = "";
 
             addedTriplesFilename = Global.options.get("UpdateServerAddress") + cntr.getFormattedFilePath() +
-                                   Global.options.get("addedTriplesFileExtension");
+                    Global.options.get("addedTriplesFileExtension");
 
             deletedTriplesFilename = Global.options.get("UpdateServerAddress") + cntr.getFormattedFilePath() +
-                                   Global.options.get("removedTriplesFileExtension");
+                    Global.options.get("removedTriplesFileExtension");
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
             List<String> triplesToAdd = Arrays.asList();
 
             //Download and decompress the file of deleted triples
-            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename,Global.options.get("UpdatesDownloadFolder"));
+            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename, Global.options.get("UpdatesDownloadFolder"));
 
-            if(deletedCompressedDownloadedFile.compareTo("") != 0){
+            if (deletedCompressedDownloadedFile.compareTo("") != 0) {
 
                 String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
                 triplesToDelete = Utils.getTriplesFromFile(decompressedDeletedNTriplesFile);
-                if(deleteFiles) {
+                if (deleteFiles) {
                     Utils.deleteFile(decompressedDeletedNTriplesFile);
                 }
 
@@ -76,10 +76,10 @@ public class Main {
             //Download and decompress the file of added triples
             String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, Global.options.get("UpdatesDownloadFolder"));
 
-            if(addedCompressedDownloadedFile.compareTo("") != 0){
+            if (addedCompressedDownloadedFile.compareTo("") != 0) {
                 String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
                 triplesToAdd = Utils.getTriplesFromFile(decompressedAddedNTriplesFile);
-                if(deleteFiles) {
+                if (deleteFiles) {
                     Utils.deleteFile(decompressedAddedNTriplesFile);
                 }
 
@@ -92,7 +92,7 @@ public class Main {
 
 
             //No files with that sequence so that indicates a failed trail, so we increment the counter of unsuccessful queries
-            if((addedCompressedDownloadedFile.compareTo("") == 0) && (deletedCompressedDownloadedFile.compareTo("") == 0)){
+            if ((addedCompressedDownloadedFile.compareTo("") == 0) && (deletedCompressedDownloadedFile.compareTo("") == 0)) {
                 Global.numberOfSuccessiveFailedTrails++;
             }
             LastDownloadDateManager.writeLastDownloadDate("lastDownloadDate.dat", cntr.toString());
@@ -101,6 +101,6 @@ public class Main {
 
         JDBCPoolConnection.shutdown();
 
-   }  // end of main
+    }  // end of main
 
 }

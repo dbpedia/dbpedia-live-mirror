@@ -1,6 +1,8 @@
 package org.dbpedia.extraction.live.mirror.helper;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 
 /**
  * Holds a single changeset, must not be initialized with multiple changesets
