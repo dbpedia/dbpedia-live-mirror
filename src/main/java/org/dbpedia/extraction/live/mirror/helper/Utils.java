@@ -78,10 +78,9 @@ public final class Utils {
      * Decompresses the passed GZip file, and returns the filename of the decompressed file
      *
      * @param filename             The filename of compressed file
-     * @param deleteCompressedFile Whether to delete the original compressed file upon completion
      * @return The filename of the output file, or empty string if a problem occurs
      */
-    public static String decompressGZipFile(String filename, boolean deleteCompressedFile) {
+    public static String decompressGZipFile(String filename) {
 
         String outFilename;
         //The output filename is the same as input filename without last .gz
@@ -111,9 +110,7 @@ public final class Utils {
             logger.warn("File " + filename + " cannot be decompressed due to " + ioe.getMessage(), ioe);
             outFilename = "";
         } finally {
-            if (deleteCompressedFile) {
-                Utils.deleteFile(filename);
-            }
+            Utils.deleteFile(filename);
         }
         return outFilename;
     }
