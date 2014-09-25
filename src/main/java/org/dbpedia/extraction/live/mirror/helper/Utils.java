@@ -101,7 +101,7 @@ public final class Utils {
 
             logger.info("File : " + filename +" decompressed successfully to " + outFilename);
         } catch (EOFException e) {
-            // probably Wrong compression, write dummy empty file
+            // probably Wrong compression, out stream will close and existing contents will remain
            logger.error("EOFException in compressed file: " + filename + " - Trying to recover");
         }
         catch(IOException ioe){
