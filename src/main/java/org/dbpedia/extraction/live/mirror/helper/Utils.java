@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,7 +31,7 @@ public final class Utils {
 
         try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"))) {
 
-            String line = null;
+            String line;
             while ((line = in.readLine()) != null) {
                 String triple = line.trim();
 
@@ -83,7 +85,7 @@ public final class Utils {
      */
     public static String decompressGZipFile(String filename, boolean deleteCompressedFile) {
 
-        String outFilename = "";
+        String outFilename;
         //The output filename is the same as input filename without last .gz
         int lastDotPosition = filename.lastIndexOf(".");
         outFilename = filename.substring(0, lastDotPosition);
@@ -94,7 +96,7 @@ public final class Utils {
                 GZIPInputStream gis = new GZIPInputStream(fis);
                 InputStreamReader isr = new InputStreamReader(gis, "UTF8");
                 //BufferedReader in = new BufferedReader(isr);
-                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFilename), "UTF8");
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outFilename), "UTF8")
         ) {
             int character;
             while ((character = isr.read()) != -1) {
@@ -113,13 +115,13 @@ public final class Utils {
         } finally {
             if (deleteCompressedFile)
                 (new File(filename)).delete();
-
-            return outFilename;
         }
+        return outFilename;
     }
 
     /**
      * Downloads the file with passed URL to the passed folder
+     * http://stackoverflow.com/a/921400/318221
      *
      * @param fileURL    URL of the file that should be downloaded
      * @param folderPath The path to which this file should be saved
@@ -127,113 +129,37 @@ public final class Utils {
      */
     public static String downloadFile(String fileURL, String folderPath) {
 
-        //-----------------------------------------------------//
-        //  Step 1:  Start creating a few objects we'll need.
-        //-----------------------------------------------------//
+        //Extract filename only without full path
+        int lastSlashPos = fileURL.lastIndexOf("/");
+        if (lastSlashPos < 0)
+            return "";
 
-        URL u;
-        InputStream is = null;
-        DataInputStream dis;
-        String fullFileName = "";
-        FileOutputStream output = null;
+        String fullFileName = folderPath + fileURL.substring(lastSlashPos + 1);
+
+        //Create parent folder if it does not already exist
+        File file = new File(fullFileName);
+        file.getParentFile().mkdirs();
+
+        URL url;
 
         try {
+            url = new URL(fileURL);
+        } catch (MalformedURLException e) {
+            return "";
+        }
 
-            //Extract filename only without full path
-            int lastSlashPos = fileURL.lastIndexOf("/");
-            if (lastSlashPos < 0)
-                return "";
+        try (
+             ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+             FileOutputStream fos = new FileOutputStream(file);
+        ) {
 
-            //Initialize fullFileName with name of the file itself only
-            fullFileName = fileURL.substring(lastSlashPos + 1);
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 
-            //Create parent folder if it does not already exist
-            File parentFolder = new File(folderPath);
-            if (parentFolder != null)
-                parentFolder.mkdirs();
-
-            //construct the full file path, including its parent folder
-            fullFileName = folderPath + fullFileName;
-
-            //------------------------------------------------------------//
-            // Step 2:  Create the URL.                                   //
-            //------------------------------------------------------------//
-            // Note: Put your real URL here, or better yet, read it as a  //
-            // command-line arg, or read it from a file.                  //
-            //------------------------------------------------------------//
-
-            //         u = new URL("http://live.dbpedia.org/liveupdates");
-
-            u = new URL(fileURL);
-
-            //----------------------------------------------//
-            // Step 3:  Open an input stream from the url.  //
-            //----------------------------------------------//
-
-            is = u.openStream();         // throws an IOException
-
-            //-------------------------------------------------------------//
-            // Step 4:                                                     //
-            //-------------------------------------------------------------//
-            // Convert the InputStream to a buffered DataInputStream.      //
-            // Buffering the stream makes the reading faster; the          //
-            // readLine() method of the DataInputStream makes the reading  //
-            // easier.                                                     //
-            //-------------------------------------------------------------//
-
-            dis = new DataInputStream(new BufferedInputStream(is));
-
-            //------------------------------------------------------------//
-            // Step 5:                                                    //
-            //------------------------------------------------------------//
-            // Now just read each record of the input stream, and print   //
-            // it out.  Note that it's assumed that this problem is run   //
-            // from a command-line, not from an application or applet.    //
-            //------------------------------------------------------------//
-            output = new FileOutputStream(fullFileName);
-            byte[] fileContents = new byte[dis.available()];
-            while (dis.available() != 0) {
-                output.write(dis.readByte());
-            }
-
-            logger.debug("File : " + fileURL + " has been successfully downloaded");
-
-        } catch (MalformedURLException mue) {
-
-
-            //logger.warn("File : " + fileURL + " cannot be downloaded as it does not exist");
-//           mue.printStackTrace();
-            fullFileName = "";
-//             System.exit(1);
-
-        } catch (IOException ioe) {
-
-            //logger.warn("File : " + fileURL + " cannot be downloaded as it does not exist");
-//             ioe.printStackTrace();
-//             System.exit(1);
-            fullFileName = "";
-
-        } finally {
-
-            //---------------------------------//
-            // Step 6:  Close the InputStream  //
-            //---------------------------------//
-
-            try {
-
-                if (is != null)
-                    is.close();
-                if (output != null) {
-                    output.flush();
-                    output.close();
-                }
-            } catch (IOException ioe) {
-                // just going to ignore this one
-            }
-
-        } // end of 'finally' clause
-
-        //Decompressor.decompressGZipFile(fullFileName);
+        } catch (FileNotFoundException e) {
+            return "";
+        } catch (IOException e) {
+            return "";
+        }
 
         return fullFileName;
     }
