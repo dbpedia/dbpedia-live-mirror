@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -30,8 +31,12 @@ public final class Utils {
 
             String line = null;
             while ((line = in.readLine()) != null) {
-                if (!line.trim().isEmpty())
-                    lines.add(line.trim());
+                String triple = line.trim();
+
+                // Ends with is a hack for not correctly decompressed changesets
+                if ( !triple.isEmpty() && !triple.startsWith("#") && triple.endsWith(" .") ) {
+                    lines.add(triple);
+                }
 
             }
         } catch (FileNotFoundException e) {
@@ -56,7 +61,7 @@ public final class Utils {
         }
     }
 
-    public static String generateStringFromList(List<String> strList,String sep) {
+    public static String generateStringFromList(Collection<String> strList,String sep) {
 
         StringBuilder finalString = new StringBuilder();
 
@@ -87,21 +92,20 @@ public final class Utils {
                 //GzipCompressorInputStream(
                 GZIPInputStream gis = new GZIPInputStream(fis);
                 InputStreamReader isr = new InputStreamReader(gis,  "UTF8");
-                BufferedReader in = new BufferedReader(isr);
+                //BufferedReader in = new BufferedReader(isr);
                 OutputStreamWriter out = new OutputStreamWriter (new FileOutputStream(outFilename), "UTF8");
         )
         {
-
-
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                out.write(line + "\n");
+            int character;
+            while ((character = isr.read()) != -1) {
+                out.write(character);
 
             }
 
-            logger.info("File : " + filename +" decompressed successfully to " + outFilename);
+            logger.debug("File : " + filename + " decompressed successfully to " + outFilename);
         } catch (EOFException e) {
             // probably Wrong compression, out stream will close and existing contents will remain
+            // but might leave incomplete triples
            logger.error("EOFException in compressed file: " + filename + " - Trying to recover");
         }
         catch(IOException ioe){
