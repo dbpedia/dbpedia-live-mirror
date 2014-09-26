@@ -2,3 +2,5 @@
 ### Maven template
 target/
 .idea/*
+*.dat
+*.txt

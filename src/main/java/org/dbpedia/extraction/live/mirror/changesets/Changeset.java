@@ -1,4 +1,4 @@
-package org.dbpedia.extraction.live.mirror.helper;
+package org.dbpedia.extraction.live.mirror.changesets;
 
 import java.util.Collection;
 import java.util.Collections;

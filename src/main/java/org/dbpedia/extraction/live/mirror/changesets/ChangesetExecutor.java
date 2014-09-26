@@ -1,5 +1,7 @@
-package org.dbpedia.extraction.live.mirror.helper;
+package org.dbpedia.extraction.live.mirror.changesets;
 
+import org.dbpedia.extraction.live.mirror.helper.Global;
+import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULException;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULExecutor;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
@@ -11,26 +13,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Mohamed Morsey
- * Date: 5/29/11
- * Time: 5:10 PM
- * Formulates SPARUL insert and delete statements based on data stored in files that were downloaded from DBpedia-Live
- * server.
+ * Applies a changeset in a SPARULExecutor using a SPARULGenerator
+ *
+ * @author Dimitris Kontokostas
+ * @since 9/26/14 9:34 AM
  */
-public final class SPARULMediator {
+public class ChangesetExecutor {
 
-    private static final Logger logger = LoggerFactory.getLogger(SPARULMediator.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChangesetExecutor.class);
 
-    private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
+    private final SPARULExecutor sparulExecutor;
 
-    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.getOptions().get("graphURI"));
+    private final SPARULGenerator sparulGenerator;
 
     private enum Action {ADD, DELETE}
 
-    private SPARULMediator(){}
+    public ChangesetExecutor(SPARULExecutor sparulExecutor, SPARULGenerator sparulGenerator){
+        this.sparulExecutor = sparulExecutor;
+        this.sparulGenerator = sparulGenerator;
+    }
 
-    public static void applyChangeset(Changeset changeset) {
+    public void applyChangeset(Changeset changeset) {
 
         // Deletions must be executed before additions
 
@@ -42,8 +45,12 @@ public final class SPARULMediator {
 
     }
 
+    public void clearGraph() {
+        executeSparulWrapper(sparulGenerator.clearGraph());
+    }
 
-    private static boolean executeAction(Collection<String> triples, Action action) {
+
+    private boolean executeAction(Collection<String> triples, Action action) {
         if (triples.isEmpty()) {
             return true;
         }
@@ -80,7 +87,7 @@ public final class SPARULMediator {
         return false;
     }
 
-    private static <T> Collection<Collection<T>> splitCollection(Collection<T> collection, int chunks) {
+    private <T> Collection<Collection<T>> splitCollection(Collection<T> collection, int chunks) {
         ArrayList<Collection<T>> lists = new ArrayList<>();
         for (int i = 0; i < chunks; i++) {
             lists.add(new ArrayList<T>());
@@ -94,7 +101,7 @@ public final class SPARULMediator {
         return lists;
     }
 
-    private static boolean executeSparulWrapper(String sparul) {
+    private boolean executeSparulWrapper(String sparul) {
         try {
             sparulExecutor.executeSPARUL(sparul);
         } catch (SPARULException e) {

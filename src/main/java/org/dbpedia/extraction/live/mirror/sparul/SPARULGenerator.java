@@ -1,7 +1,7 @@
 package org.dbpedia.extraction.live.mirror.sparul;
 
 /**
- * Generates a SPARUL Query
+ * Generates a SPARUL Query that is bound to a graph
  *
  * @author Dimitris Kontokostas
  * @since 9/24/14 10:22 AM
@@ -20,6 +20,10 @@ public class SPARULGenerator {
 
     public String delete(String triples) {
         return generate(triples, false);
+    }
+
+    public String clearGraph() {
+        return "CLEAR GRAPH <" + graph + "> ";
     }
 
 

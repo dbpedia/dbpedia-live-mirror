@@ -1,8 +1,12 @@
-package org.dbpedia.extraction.live.mirror.main;
+package org.dbpedia.extraction.live.mirror;
 
+import org.dbpedia.extraction.live.mirror.changesets.Changeset;
+import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
@@ -16,15 +20,21 @@ import java.util.List;
  * This class is originally created from class defined in http://www.devdaily.com/java/edu/pj/pj010011
  * which is created by http://www.DevDaily.com
  */
-public final class Main {
+public final class LiveSync {
 
 
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LiveSync.class);
 
-    private Main(){}
+    private LiveSync(){}
 
     public static void main(String[] args) {
+        boolean deleteFiles = false;
+        if ((Global.getOptions().get("deleteFilesAfterCompletion") != null) &&
+                (Global.getOptions().get("deleteFilesAfterCompletion").compareTo("") != 0))
+            deleteFiles = Boolean.parseBoolean(Global.getOptions().get("deleteFilesAfterCompletion"));
+        //Initialize logger
 
+        ChangesetExecutor changesetExecutor = new ChangesetExecutor(new SPARULVosExecutor(), new SPARULGenerator(Global.getOptions().get("LiveGraphURI")));
         DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate("lastDownloadDate.dat");
 
 
@@ -60,11 +70,11 @@ public final class Main {
 
             if (deletedCompressedDownloadedFile.compareTo("") != 0) {
 
-                String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile);
+                String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
                 triplesToDelete = Utils.getTriplesFromFile(decompressedDeletedNTriplesFile);
-
-                Utils.deleteFile(decompressedDeletedNTriplesFile);
-
+                if (deleteFiles) {
+                    Utils.deleteFile(decompressedDeletedNTriplesFile);
+                }
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.setNumberOfSuccessiveFailedTrails(0);
@@ -74,18 +84,18 @@ public final class Main {
             String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, Global.getOptions().get("UpdatesDownloadFolder"));
 
             if (addedCompressedDownloadedFile.compareTo("") != 0) {
-                String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile);
+                String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
                 triplesToAdd = Utils.getTriplesFromFile(decompressedAddedNTriplesFile);
-
-                Utils.deleteFile(decompressedAddedNTriplesFile);
-
+                if (deleteFiles) {
+                    Utils.deleteFile(decompressedAddedNTriplesFile);
+                }
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.setNumberOfSuccessiveFailedTrails(0);
             }
 
             Changeset changeset = new Changeset(cntr.toString(), triplesToAdd, triplesToDelete);
-            SPARULMediator.applyChangeset(changeset);
+            changesetExecutor.applyChangeset(changeset);
 
 
             //No files with that sequence so that indicates a failed trail, so we increment the counter of unsuccessful queries

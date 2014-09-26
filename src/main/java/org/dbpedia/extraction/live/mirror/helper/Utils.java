@@ -8,8 +8,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -72,6 +74,25 @@ public final class Utils {
         }
 
         return finalString.toString();
+    }
+
+    public static boolean writeTriplesToFile(List<String> triples, String filename) {
+
+        try (
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), "UTF8")
+        ) {
+
+            for (String triple: triples) {
+                out.write(triple + "\n");
+            }
+
+            return true;
+
+        } catch (IOException e) {
+            logger.error("Error writing file: " + filename, e);
+        }
+
+        return false;
     }
 
     /**
@@ -159,5 +180,9 @@ public final class Utils {
         }
 
         return fullFileName;
+    }
+
+    public static String getTimestamp() {
+        return new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date());
     }
 }
