@@ -5,6 +5,8 @@ import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
@@ -32,7 +34,7 @@ public final class LiveSync {
             deleteFiles = Boolean.parseBoolean(Global.getOptions().get("deleteFilesAfterCompletion"));
         //Initialize logger
 
-
+        ChangesetExecutor changesetExecutor = new ChangesetExecutor(new SPARULVosExecutor(), new SPARULGenerator(Global.getOptions().get("LiveGraphURI")));
         DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate("lastDownloadDate.dat");
 
 
@@ -93,7 +95,7 @@ public final class LiveSync {
             }
 
             Changeset changeset = new Changeset(cntr.toString(), triplesToAdd, triplesToDelete);
-            ChangesetExecutor.applyChangeset(changeset);
+            changesetExecutor.applyChangeset(changeset);
 
 
             //No files with that sequence so that indicates a failed trail, so we increment the counter of unsuccessful queries

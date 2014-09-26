@@ -13,24 +13,27 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Applies a changeset in a SPARULExecutor
+ * Applies a changeset in a SPARULExecutor using a SPARULGenerator
  *
  * @author Dimitris Kontokostas
  * @since 9/26/14 9:34 AM
  */
-public final class ChangesetExecutor {
+public class ChangesetExecutor {
 
     private static final Logger logger = LoggerFactory.getLogger(ChangesetExecutor.class);
 
-    private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
+    private final SPARULExecutor sparulExecutor;
 
-    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.getOptions().get("LiveGraphURI"));
+    private final SPARULGenerator sparulGenerator;
 
     private enum Action {ADD, DELETE}
 
-    private ChangesetExecutor(){}
+    public ChangesetExecutor(SPARULExecutor sparulExecutor, SPARULGenerator sparulGenerator){
+        this.sparulExecutor = sparulExecutor;
+        this.sparulGenerator = sparulGenerator;
+    }
 
-    public static void applyChangeset(Changeset changeset) {
+    public void applyChangeset(Changeset changeset) {
 
         // Deletions must be executed before additions
 
@@ -42,8 +45,12 @@ public final class ChangesetExecutor {
 
     }
 
+    public void clearGraph() {
+        executeSparulWrapper(sparulGenerator.clearGraph());
+    }
 
-    private static boolean executeAction(Collection<String> triples, Action action) {
+
+    private boolean executeAction(Collection<String> triples, Action action) {
         if (triples.isEmpty()) {
             return true;
         }
@@ -80,7 +87,7 @@ public final class ChangesetExecutor {
         return false;
     }
 
-    private static <T> Collection<Collection<T>> splitCollection(Collection<T> collection, int chunks) {
+    private <T> Collection<Collection<T>> splitCollection(Collection<T> collection, int chunks) {
         ArrayList<Collection<T>> lists = new ArrayList<>();
         for (int i = 0; i < chunks; i++) {
             lists.add(new ArrayList<T>());
@@ -94,7 +101,7 @@ public final class ChangesetExecutor {
         return lists;
     }
 
-    private static boolean executeSparulWrapper(String sparul) {
+    private boolean executeSparulWrapper(String sparul) {
         try {
             sparulExecutor.executeSPARUL(sparul);
         } catch (SPARULException e) {
