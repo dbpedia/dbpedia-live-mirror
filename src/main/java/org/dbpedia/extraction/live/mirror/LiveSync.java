@@ -25,14 +25,21 @@ public final class LiveSync {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LiveSync.class);
 
+    private static final String LASTDOWNLOAD = "lastDownloadDate.dat";
+
     private LiveSync(){}
 
     public static void main(String[] args) {
 
         ChangesetExecutor changesetExecutor = new ChangesetExecutor(new SPARULVosExecutor(), new SPARULGenerator(Global.getOptions().get("LiveGraphURI")));
-        DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate("lastDownloadDate.dat");
 
-        UpdatesIterator iterator = new UpdatesIterator(lastDownload, 3);
+        String updateServerAddress = Global.getOptions().get("UpdateServerAddress");
+        String UpdatesDownloadFolder = Global.getOptions().get("UpdatesDownloadFolder");
+        String addedTriplesFileExtension = Global.getOptions().get("addedTriplesFileExtension");
+        String removedTriplesFileExtension = Global.getOptions().get("removedTriplesFileExtension");
+
+        DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate(LASTDOWNLOAD);
+        UpdatesIterator iterator = new UpdatesIterator(lastDownload, 3,  Integer.parseInt(Global.getOptions().get("MaximumNumberOfSuccessiveFailedTrials")));
 
         while (iterator.hasNext()) {
             DownloadTimeCounter cntr = iterator.next();
@@ -49,18 +56,16 @@ public final class LiveSync {
 
             String addedTriplesFilename, deletedTriplesFilename;
 
-            addedTriplesFilename = Global.getOptions().get("UpdateServerAddress") + cntr.getFormattedFilePath() +
-                    Global.getOptions().get("addedTriplesFileExtension");
+            addedTriplesFilename = updateServerAddress + cntr.getFormattedFilePath() + addedTriplesFileExtension;
 
-            deletedTriplesFilename = Global.getOptions().get("UpdateServerAddress") + cntr.getFormattedFilePath() +
-                    Global.getOptions().get("removedTriplesFileExtension");
+            deletedTriplesFilename = updateServerAddress + cntr.getFormattedFilePath() + removedTriplesFileExtension;
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
             List<String> triplesToAdd = Arrays.asList();
 
             //Download and decompress the file of deleted triples
-            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename, Global.getOptions().get("UpdatesDownloadFolder"));
+            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename, UpdatesDownloadFolder);
 
             if (deletedCompressedDownloadedFile.compareTo("") != 0) {
 
@@ -74,7 +79,7 @@ public final class LiveSync {
             }
 
             //Download and decompress the file of added triples
-            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, Global.getOptions().get("UpdatesDownloadFolder"));
+            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, UpdatesDownloadFolder);
 
             if (addedCompressedDownloadedFile.compareTo("") != 0) {
                 String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile);
@@ -94,7 +99,7 @@ public final class LiveSync {
             if ((addedCompressedDownloadedFile.compareTo("") == 0) && (deletedCompressedDownloadedFile.compareTo("") == 0)) {
                 Global.setNumberOfSuccessiveFailedTrails(Global.getNumberOfSuccessiveFailedTrails() + 1);
             }
-            LastDownloadDateManager.writeLastDownloadDate("lastDownloadDate.dat", cntr.toString());
+            LastDownloadDateManager.writeLastDownloadDate(LASTDOWNLOAD, cntr.toString());
 
         }
 

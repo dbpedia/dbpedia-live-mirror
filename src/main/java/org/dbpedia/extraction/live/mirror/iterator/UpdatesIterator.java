@@ -21,19 +21,20 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter> {
 
     private static final Logger logger = LoggerFactory.getLogger(UpdatesIterator.class);
     private final int delay;
+    private final int maximumNumberOfSuccessiveFailedTrials; //Integer.parseInt(Global.getOptions().get("maximumNumberOfSuccessiveFailedTrials"))
 
     private final DownloadTimeCounter counter;
 
     /**
      * Initializes UpdatesIterator object
-     *
-     * @param startingCounter Counter containing the starting point
+     *  @param startingCounter Counter containing the starting point
      * @param delayInterval   Interval to wait in case there is no new items available (in seconds)
+     * @param maximumNumberOfSuccessiveFailedTrials
      */
-    public UpdatesIterator(DownloadTimeCounter startingCounter, int delayInterval) {
+    public UpdatesIterator(DownloadTimeCounter startingCounter, int delayInterval, int maximumNumberOfSuccessiveFailedTrials) {
+        this.maximumNumberOfSuccessiveFailedTrials = maximumNumberOfSuccessiveFailedTrials;
 
-        counter = new DownloadTimeCounter(startingCounter.year, startingCounter.month, startingCounter.day,
-                startingCounter.hour, startingCounter.counter);
+        counter = new DownloadTimeCounter(startingCounter);
 
         delay = delayInterval * 1000;
     }
@@ -61,7 +62,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter> {
                     strLastPublishDate += (char) ch;
                 }
 
-                DownloadTimeCounter lastPublishCounter = new DownloadTimeCounter(strLastPublishDate);
+                DownloadTimeCounter lastPublishCounter = new DownloadTimeCounter(strLastPublishDate, maximumNumberOfSuccessiveFailedTrials);
 
                 if (counter.compareTo(lastPublishCounter) < 0) {
                     //fsLastResponseDateFile.close();
@@ -113,7 +114,7 @@ public class UpdatesIterator implements Iterator<DownloadTimeCounter> {
             return null;*/
 
 
-        counter.advance();
+        counter.advancePatch();
         return counter;
         //return null;
     }

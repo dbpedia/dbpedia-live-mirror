@@ -48,7 +48,7 @@ public final class LastDownloadDateManager {
 
         }
 
-        return new DownloadTimeCounter(strLastResponseDate);
+        return new DownloadTimeCounter(strLastResponseDate,  Integer.parseInt(Global.getOptions().get("MaximumNumberOfSuccessiveFailedTrials")));
 
     }
 

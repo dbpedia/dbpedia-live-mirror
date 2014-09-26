@@ -15,26 +15,41 @@ import java.util.Date;
  */
 public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
-    public int year;
-    public int month;
-    public int day;
-    public int hour;
-    public int counter;
+    private final int maximumNumberOfSuccessiveFailedTrials;
 
-    public DownloadTimeCounter(int year, int month, int day, int hour, int counter) {
+    private int year;
+    private int month;
+    private int day;
+    private int hour;
+    private int counter;
+
+
+    public DownloadTimeCounter(int year, int month, int day, int hour, int counter, int maximumNumberOfSuccessiveFailedTrials) {
         this.year = year;
         this.month = month;
         this.day = day;
         this.hour = hour;
         this.counter = counter;
+        this.maximumNumberOfSuccessiveFailedTrials = maximumNumberOfSuccessiveFailedTrials;
+    }
+
+    public DownloadTimeCounter(DownloadTimeCounter downloadTimeCounter) {
+        this.year = downloadTimeCounter.year;
+        this.month = downloadTimeCounter.month;
+        this.day = downloadTimeCounter.day;
+        this.hour = downloadTimeCounter.hour;
+        this.counter = downloadTimeCounter.counter;
+        this.maximumNumberOfSuccessiveFailedTrials = downloadTimeCounter.maximumNumberOfSuccessiveFailedTrials;
     }
 
     /**
      * Constructs DownloadTimeCounter object from a string by splitting it using the hyphen "-"
      *
      * @param fullTimeString String containing full time path i.e. Year-Month-Day-Hour-Counter
+     * @param maximumNumberOfSuccessiveFailedTrials
      */
-    public DownloadTimeCounter(String fullTimeString) {
+    public DownloadTimeCounter(String fullTimeString, int maximumNumberOfSuccessiveFailedTrials) {
+        this.maximumNumberOfSuccessiveFailedTrials = maximumNumberOfSuccessiveFailedTrials;
         try {
             String[] dateParts = fullTimeString.split("-");
             this.year = Integer.parseInt(dateParts[0]);
@@ -55,12 +70,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
         }
     }
 
-    @Override
-    public String toString() {
-        return this.year + "-" + String.format("%02d", this.month) + "-" + String.format("%02d", this.day)
-                + "-" + String.format("%02d", this.hour) + "-" + String.format("%06d", this.counter);
 
-    }
 
     /**
      * Formats the instance in folder path format, i.e. Year/Month/Day/Hour/Counter
@@ -68,74 +78,56 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
      * @return String formatted with Year/Month/Day/Hour/Counter
      */
     public String getFormattedFilePath() {
-
-        return this.year + "/" + String.format("%02d", this.month) + "/" + String.format("%02d", this.day)
-                + "/" + String.format("%02d", this.hour) + "/" + String.format("%06d", this.counter);
+        return String.format("%04d/%02d/%02d/%02d/%06d", this.year, this.month, this.day, this.hour, this.counter);
     }
 
-
-    public int compareTo(DownloadTimeCounter cntr) {
-        int comparisonResult = compareField(cntr, Fields.YEAR);
-        if (comparisonResult != 0)
-            return comparisonResult;
-        else {
-            comparisonResult = compareField(cntr, Fields.MONTH);
-
-            if (comparisonResult != 0)
-                return comparisonResult;
-
-            else {
-                comparisonResult = compareField(cntr, Fields.DAY);
-
-                if (comparisonResult != 0)
-                    return comparisonResult;
-
-                else {
-                    comparisonResult = compareField(cntr, Fields.HOUR);
-
-                    if (comparisonResult != 0)
-                        return comparisonResult;
-
-                    else {
-                        comparisonResult = compareField(cntr, Fields.COUNTER);
-                        return comparisonResult;
-                    }
-
-                }
-
-            }
-        }
+    @Override
+    public String toString() {
+        return String.format("%04d-%02d-%02d-%02d-%06d", this.year, this.month, this.day, this.hour, this.counter);
     }
 
-    /**
-     * Compares a specific field, e.g. year, month, ... and returns the result of comparison -1, 0, 1
-     *
-     * @return -1 if the filed of current instances is less than that of the passed instance,
-     * 1 if it is bigger, and 0 otherwise
-     */
-    private int compareField(DownloadTimeCounter cntr, Fields field) {
-        switch (field) {
-            case YEAR:
-                return Integer.valueOf(year).compareTo(cntr.year);
-//                break;
-            case MONTH:
-                return Integer.valueOf(month).compareTo(cntr.month);
-//                break;
-            case DAY:
-                return Integer.valueOf(day).compareTo(cntr.day);
-//                break;
-            case HOUR:
-                return Integer.valueOf(hour).compareTo(cntr.hour);
-//                break;
-            case COUNTER:
-                return Integer.valueOf(counter).compareTo(cntr.counter);
-//                break;
-        }
-        return 0;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DownloadTimeCounter that = (DownloadTimeCounter) o;
+
+        if (counter != that.counter) return false;
+        if (day != that.day) return false;
+        if (hour != that.hour) return false;
+        if (month != that.month) return false;
+        if (year != that.year) return false;
+
+        return true;
     }
 
-    private enum Fields {
-        YEAR, MONTH, DAY, HOUR, COUNTER
+    @Override
+    public int hashCode() {
+        int result = year;
+        result = 31 * result + month;
+        result = 31 * result + day;
+        result = 31 * result + hour;
+        result = 31 * result + counter;
+        return result;
+    }
+
+    @Override
+    public int compareTo(DownloadTimeCounter that) {
+
+        if (this.year != that.year)
+            return (new Integer(this.year)).compareTo(that.year);
+
+        if (this.month != that.month)
+            return (new Integer(this.month)).compareTo(that.month);
+
+        if (this.day != that.day)
+            return (new Integer(this.day)).compareTo(that.day);
+
+        if (this.hour != that.hour)
+            return (new Integer(this.hour)).compareTo(that.hour);
+
+        return (new Integer(this.counter)).compareTo(that.counter);
     }
 
     /**
@@ -143,12 +135,12 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
      *
      * @return True if it advances successfully, false otherwise
      */
-    public boolean advance() {
+    public boolean advancePatch() {
 
-        int maximumNumberOfSuccessiveFailedTrials = Integer.parseInt(Global.getOptions().get("MaximumNumberOfSuccessiveFailedTrials"));
+
 
         //If the number of successive trials exceeds maximumNumberOfSuccessiveFailedTrials, then this indicates that no
-        // more files exist in that folder, and we should advance hour with one, so we move onto another folder,
+        // more files exist in that folder, and we should advancePatch hour with one, so we move onto another folder,
         //and we should also reset counter
         if (Global.getNumberOfSuccessiveFailedTrails() >= maximumNumberOfSuccessiveFailedTrials) {
             Global.setNumberOfSuccessiveFailedTrails(0);
@@ -160,25 +152,18 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     }
 
     private boolean advanceHour() {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH");
-        String dateSting = this.year + "-" + String.format("%02d", this.month) + "-" + String.format("%02d", this.day)
-                + "-" + String.format("%02d", this.hour);
 
-        try {
-            Date dt = formatter.parse(dateSting);
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(dt);
-            cal.add(Calendar.HOUR_OF_DAY, 1);
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month-1, day, hour, 0);
+        cal.add(Calendar.HOUR_OF_DAY, 1);
 
-            this.year = cal.get(Calendar.YEAR);
-            this.month = cal.get(Calendar.MONTH) + 1;
-            this.day = cal.get(Calendar.DAY_OF_MONTH);
-            this.hour = cal.get(Calendar.HOUR_OF_DAY);
-            this.counter = 0;
-            return true;
-        } catch (ParseException exp) {
-            return false;
-        }
+        this.year = cal.get(Calendar.YEAR);
+        this.month = cal.get(Calendar.MONTH) + 1;
+        this.day = cal.get(Calendar.DAY_OF_MONTH);
+        this.hour = cal.get(Calendar.HOUR_OF_DAY);
+        this.counter = 0;
+        return true;
+
     }
 
 
