@@ -1,4 +1,4 @@
-package org.dbpedia.extraction.live.mirror.main;
+package org.dbpedia.extraction.live.mirror;
 
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
@@ -16,12 +16,12 @@ import java.util.List;
  * This class is originally created from class defined in http://www.devdaily.com/java/edu/pj/pj010011
  * which is created by http://www.DevDaily.com
  */
-public final class Main {
+public final class LiveSync {
 
 
-    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LiveSync.class);
 
-    private Main(){}
+    private LiveSync(){}
 
     public static void main(String[] args) {
         boolean deleteFiles = false;
