@@ -1,13 +1,9 @@
 package org.dbpedia.extraction.live.mirror;
 
+import org.dbpedia.extraction.live.mirror.changesets.Changeset;
 import org.dbpedia.extraction.live.mirror.helper.*;
-import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.ontology.OntologyHandler;
-import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 import org.slf4j.Logger;
-
-import java.util.Arrays;
-import java.util.List;
 
 
 /**

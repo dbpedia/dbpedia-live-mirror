@@ -2,13 +2,12 @@ package org.dbpedia.extraction.live.mirror.ontology;
 
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
-import org.dbpedia.extraction.live.mirror.helper.Changeset;
+import org.dbpedia.extraction.live.mirror.changesets.Changeset;
 import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

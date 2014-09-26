@@ -1,5 +1,7 @@
 package org.dbpedia.extraction.live.mirror;
 
+import org.dbpedia.extraction.live.mirror.changesets.Changeset;
+import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
@@ -91,7 +93,7 @@ public final class LiveSync {
             }
 
             Changeset changeset = new Changeset(cntr.toString(), triplesToAdd, triplesToDelete);
-            SPARULMediator.applyChangeset(changeset);
+            ChangesetExecutor.applyChangeset(changeset);
 
 
             //No files with that sequence so that indicates a failed trail, so we increment the counter of unsuccessful queries
