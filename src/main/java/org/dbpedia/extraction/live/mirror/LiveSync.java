@@ -28,15 +28,9 @@ public final class LiveSync {
     private LiveSync(){}
 
     public static void main(String[] args) {
-        boolean deleteFiles = false;
-        if ((Global.getOptions().get("deleteFilesAfterCompletion") != null) &&
-                (Global.getOptions().get("deleteFilesAfterCompletion").compareTo("") != 0))
-            deleteFiles = Boolean.parseBoolean(Global.getOptions().get("deleteFilesAfterCompletion"));
-        //Initialize logger
 
         ChangesetExecutor changesetExecutor = new ChangesetExecutor(new SPARULVosExecutor(), new SPARULGenerator(Global.getOptions().get("LiveGraphURI")));
         DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate("lastDownloadDate.dat");
-
 
         UpdatesIterator iterator = new UpdatesIterator(lastDownload, 3);
 
@@ -70,11 +64,10 @@ public final class LiveSync {
 
             if (deletedCompressedDownloadedFile.compareTo("") != 0) {
 
-                String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile, deleteFiles);
+                String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile);
                 triplesToDelete = Utils.getTriplesFromFile(decompressedDeletedNTriplesFile);
-                if (deleteFiles) {
-                    Utils.deleteFile(decompressedDeletedNTriplesFile);
-                }
+
+                Utils.deleteFile(decompressedDeletedNTriplesFile);
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.setNumberOfSuccessiveFailedTrails(0);
@@ -84,11 +77,10 @@ public final class LiveSync {
             String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, Global.getOptions().get("UpdatesDownloadFolder"));
 
             if (addedCompressedDownloadedFile.compareTo("") != 0) {
-                String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile, deleteFiles);
+                String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile);
                 triplesToAdd = Utils.getTriplesFromFile(decompressedAddedNTriplesFile);
-                if (deleteFiles) {
-                    Utils.deleteFile(decompressedAddedNTriplesFile);
-                }
+
+                Utils.deleteFile(decompressedAddedNTriplesFile);
 
                 //Reset the number of failed trails, since the file is found and downloaded successfully
                 Global.setNumberOfSuccessiveFailedTrails(0);
