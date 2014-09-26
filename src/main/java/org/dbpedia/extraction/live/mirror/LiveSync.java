@@ -2,8 +2,10 @@ package org.dbpedia.extraction.live.mirror;
 
 import org.dbpedia.extraction.live.mirror.changesets.Changeset;
 import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
+import org.dbpedia.extraction.live.mirror.download.DownloadTimeCounter;
+import org.dbpedia.extraction.live.mirror.download.LastDownloadDateManager;
 import org.dbpedia.extraction.live.mirror.helper.*;
-import org.dbpedia.extraction.live.mirror.iterator.UpdatesIterator;
+import org.dbpedia.extraction.live.mirror.download.UpdatesIterator;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;

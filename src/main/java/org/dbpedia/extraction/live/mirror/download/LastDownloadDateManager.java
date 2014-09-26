@@ -1,5 +1,6 @@
-package org.dbpedia.extraction.live.mirror.helper;
+package org.dbpedia.extraction.live.mirror.download;
 
+import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

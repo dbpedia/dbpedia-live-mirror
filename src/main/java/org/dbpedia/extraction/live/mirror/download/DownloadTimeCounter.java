@@ -1,9 +1,8 @@
-package org.dbpedia.extraction.live.mirror.helper;
+package org.dbpedia.extraction.live.mirror.download;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import org.dbpedia.extraction.live.mirror.helper.Global;
+
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.

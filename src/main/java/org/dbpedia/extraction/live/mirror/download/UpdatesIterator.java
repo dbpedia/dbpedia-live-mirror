@@ -1,6 +1,5 @@
-package org.dbpedia.extraction.live.mirror.iterator;
+package org.dbpedia.extraction.live.mirror.download;
 
-import org.dbpedia.extraction.live.mirror.helper.DownloadTimeCounter;
 import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.slf4j.Logger;
