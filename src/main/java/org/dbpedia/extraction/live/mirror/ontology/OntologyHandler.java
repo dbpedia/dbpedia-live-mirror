@@ -92,6 +92,8 @@ public class OntologyHandler {
     }
 
     public void saveOntology(){
-
+        if (remote != null) {
+            Utils.writeTriplesToFile(remote, ontologyFilename);
+        }
     }
 }

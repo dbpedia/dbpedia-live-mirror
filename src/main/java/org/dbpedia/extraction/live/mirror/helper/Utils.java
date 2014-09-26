@@ -76,6 +76,25 @@ public final class Utils {
         return finalString.toString();
     }
 
+    public static boolean writeTriplesToFile(List<String> triples, String filename) {
+
+        try (
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), "UTF8")
+        ) {
+
+            for (String triple: triples) {
+                out.write(triple + "\n");
+            }
+
+            return true;
+
+        } catch (IOException e) {
+            logger.error("Error writing file: " + filename, e);
+        }
+
+        return false;
+    }
+
     /**
      * Decompresses the passed GZip file, and returns the filename of the decompressed file
      *

@@ -1,8 +1,11 @@
 package org.dbpedia.extraction.live.mirror;
 
 import org.dbpedia.extraction.live.mirror.changesets.Changeset;
+import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.helper.*;
 import org.dbpedia.extraction.live.mirror.ontology.OntologyHandler;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
+import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
 import org.slf4j.Logger;
 
 
@@ -46,6 +49,8 @@ public final class OntologySync {
         }
         ontologyCache = ontologyCache + "ontology.cache.nt";
 
+        ChangesetExecutor changesetExecutor = new ChangesetExecutor(new SPARULVosExecutor(), new SPARULGenerator(ontologyGraph));
+
         /**
          * Starting update
          */
@@ -56,7 +61,8 @@ public final class OntologySync {
             Changeset changeset = ontology.getChangeset();
 
             if (changeset != null) {
-
+                changesetExecutor.applyChangeset(changeset);
+                ontology.saveOntology();
             }
             else {
                 logger.error("Error creating changeset, probably cannot download ontology, skipping...");
