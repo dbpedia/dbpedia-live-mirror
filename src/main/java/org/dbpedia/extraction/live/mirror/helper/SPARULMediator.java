@@ -24,7 +24,7 @@ public final class SPARULMediator {
 
     private static final SPARULExecutor sparulExecutor = new SPARULVosExecutor();
 
-    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.getOptions().get("graphURI"));
+    private static final SPARULGenerator sparulGenerator = new SPARULGenerator(Global.getOptions().get("LiveGraphURI"));
 
     private enum Action {ADD, DELETE}
 
