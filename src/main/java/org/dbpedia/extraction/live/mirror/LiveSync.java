@@ -4,8 +4,9 @@ import org.dbpedia.extraction.live.mirror.changesets.Changeset;
 import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.download.DownloadTimeCounter;
 import org.dbpedia.extraction.live.mirror.download.LastDownloadDateManager;
-import org.dbpedia.extraction.live.mirror.helper.*;
-import org.dbpedia.extraction.live.mirror.download.UpdatesIterator;
+import org.dbpedia.extraction.live.mirror.helper.Global;
+import org.dbpedia.extraction.live.mirror.helper.UpdateStrategy;
+import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.dbpedia.extraction.live.mirror.sparul.JDBCPoolConnection;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
@@ -27,49 +28,112 @@ public final class LiveSync {
 
     private static final Logger logger = org.slf4j.LoggerFactory.getLogger(LiveSync.class);
 
-    private static final String LASTDOWNLOAD = "lastDownloadDate.dat";
+    private static final String LAST_DOWNLOAD = "lastDownloadDate.dat";
 
-    private LiveSync(){}
+    private static final int ERRORS_TO_ADVANCE = 3;
+
+    private LiveSync() {
+    }
 
     public static void main(String[] args) {
 
+        if (args != null && args.length > 1) {
+            logger.error("Incorrect arguments in Main. Must be zero or one of {Endless|Onetime}");
+            System.exit(1);
+        }
+        UpdateStrategy strategy = UpdateStrategy.Endless; // default value
+        if (args != null && args.length == 1) {
+            try {
+                strategy = UpdateStrategy.valueOf(args[0]);
+            } catch (Exception e) {
+                logger.error("Incorrect arguments in Main. Must be one of {Endless|Onetime}");
+                System.exit(1);
+            }
+        }
+
+        // setup change executor
         ChangesetExecutor changesetExecutor = new ChangesetExecutor(new SPARULVosExecutor(), new SPARULGenerator(Global.getOptions().get("LiveGraphURI")));
 
+        // Variable init from ini file
         String updateServerAddress = Global.getOptions().get("UpdateServerAddress");
-        String UpdatesDownloadFolder = Global.getOptions().get("UpdatesDownloadFolder");
+        String updatesDownloadFolder = Global.getOptions().get("UpdatesDownloadFolder");
         String addedTriplesFileExtension = Global.getOptions().get("addedTriplesFileExtension");
         String removedTriplesFileExtension = Global.getOptions().get("removedTriplesFileExtension");
+        long delayInSeconds = Long.parseLong(Global.getOptions().get("LiveUpdateInterval")) * 1000l;
 
-        DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate(LASTDOWNLOAD);
-        UpdatesIterator iterator = new UpdatesIterator(lastDownload, 3,  Integer.parseInt(Global.getOptions().get("MaximumNumberOfSuccessiveFailedTrials")));
+        // Set latest applied patch
+        DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate(LAST_DOWNLOAD);
+        DownloadTimeCounter currentCounter = new DownloadTimeCounter(lastDownload);
+        currentCounter.advancePatch(); // move to next patch (this one is already applied
 
-        while (iterator.hasNext()) {
-            DownloadTimeCounter cntr = iterator.next();
+        // Download last published file from server
+        String lastPublishedFilename = Global.getOptions().get("lastPublishedFilename");
+        String lastPublishFileRemote = updateServerAddress + lastPublishedFilename;
+        Utils.downloadFile(lastPublishFileRemote, updatesDownloadFolder);
+        String lastPublishFileLocal = updatesDownloadFolder + lastPublishedFilename;
+        DownloadTimeCounter remoteCounter = new DownloadTimeCounter(Utils.getFileAsString(lastPublishFileLocal));
 
-            //Since next returns null, if now new updates are available, then we should not go any further,
-            //and just wait for mor updates
-            if (cntr == null)
+        int missing_urls = 0;
+        while (true) {
+
+            // when we are about to go beyond the remote published file
+            if (currentCounter.compareTo(remoteCounter) > 0) {
+
+                /**
+                 * TODO between the app started (or last fetch of last published file)
+                 * the remote counter may be advanced but we don't take this into consideration here
+                 * probably should re-download in a temp counter, check if different and continue without sleep
+                 */
+
+                // in case of onetime run, exit
+                if (strategy.equals(UpdateStrategy.Onetime)) {
+                    logger.info("Finished the One-Time update, exiting...");
+                    break;
+                }
+
+                // sleep + download new file & continue
+                logger.info("Up-to-date with last published changeset, sleeping for a while ;)");
+                try {
+                    Thread.sleep(delayInSeconds);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                // code duplication
+                Utils.downloadFile(lastPublishFileRemote, updatesDownloadFolder);
+                remoteCounter = new DownloadTimeCounter(Utils.getFileAsString(lastPublishFileLocal));
+
+                //now we have an updated remote counter so next time this block will not run (if the updates are running)
                 continue;
 
-            //u = new URL("http://dbpedia.aksw.org/updates.live.dbpedia.org/2011/05/22/00/000001.added.nt.gz");
-//            String fullFilenameToBeDownloaded = Global.options.get("UpdateServerAddress") + lastDownload.getFormattedFilePath() + ".added.nt.gz";
-            //String compressedDownloadedFile = FileDownloader.downloadFile(options.get("UpdateServerAddress") + "2011/05/22/00/000001.added.nt.gz",
-            //         options.get("UpdatesDownloadFolder"));
+            }
 
-            String addedTriplesFilename, deletedTriplesFilename;
 
-            addedTriplesFilename = updateServerAddress + cntr.getFormattedFilePath() + addedTriplesFileExtension;
-
-            deletedTriplesFilename = updateServerAddress + cntr.getFormattedFilePath() + removedTriplesFileExtension;
+            String addedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + addedTriplesFileExtension;
+            String deletedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + removedTriplesFileExtension;
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
             List<String> triplesToAdd = Arrays.asList();
 
             //Download and decompress the file of deleted triples
-            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesFilename, UpdatesDownloadFolder);
+            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesURL, updatesDownloadFolder);
+            String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesURL, updatesDownloadFolder);
 
-            if (deletedCompressedDownloadedFile.compareTo("") != 0) {
+            // Check for errors before proceeding
+            if (addedCompressedDownloadedFile == null && deletedCompressedDownloadedFile == null) {
+                missing_urls++;
+                if (missing_urls >= ERRORS_TO_ADVANCE) {
+                    // advance hour / day / month or year
+                    currentCounter.advanceHour();
+                }
+                continue;
+            }
+            // URL works, reset missing URLs
+            missing_urls = 0;
+
+
+            if (deletedCompressedDownloadedFile != null) {
 
                 String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile);
                 triplesToDelete = Utils.getTriplesFromFile(decompressedDeletedNTriplesFile);
@@ -80,10 +144,8 @@ public final class LiveSync {
                 Global.setNumberOfSuccessiveFailedTrails(0);
             }
 
-            //Download and decompress the file of added triples
-            String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesFilename, UpdatesDownloadFolder);
 
-            if (addedCompressedDownloadedFile.compareTo("") != 0) {
+            if (addedCompressedDownloadedFile != null) {
                 String decompressedAddedNTriplesFile = Utils.decompressGZipFile(addedCompressedDownloadedFile);
                 triplesToAdd = Utils.getTriplesFromFile(decompressedAddedNTriplesFile);
 
@@ -93,15 +155,15 @@ public final class LiveSync {
                 Global.setNumberOfSuccessiveFailedTrails(0);
             }
 
-            Changeset changeset = new Changeset(cntr.toString(), triplesToAdd, triplesToDelete);
+            Changeset changeset = new Changeset(currentCounter.toString(), triplesToAdd, triplesToDelete);
             changesetExecutor.applyChangeset(changeset);
 
 
-            //No files with that sequence so that indicates a failed trail, so we increment the counter of unsuccessful queries
-            if ((addedCompressedDownloadedFile.compareTo("") == 0) && (deletedCompressedDownloadedFile.compareTo("") == 0)) {
-                Global.setNumberOfSuccessiveFailedTrails(Global.getNumberOfSuccessiveFailedTrails() + 1);
-            }
-            LastDownloadDateManager.writeLastDownloadDate(LASTDOWNLOAD, cntr.toString());
+            // save last processed date
+            LastDownloadDateManager.writeLastDownloadDate(LAST_DOWNLOAD, currentCounter.toString());
+
+            // advance to the next patch
+            currentCounter.advancePatch();
 
         }
 

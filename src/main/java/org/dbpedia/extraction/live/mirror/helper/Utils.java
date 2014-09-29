@@ -55,6 +55,25 @@ public final class Utils {
 
     }
 
+    public static String getFileAsString(String filename) {
+        StringBuilder str = new StringBuilder();
+
+        try (InputStreamReader in = new InputStreamReader(new FileInputStream(filename), "UTF-8")) {
+            int ch;
+            while ((ch = in.read()) != -1) {
+                str.append((char) ch);
+            }
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("File " + filename + " not fount!", e);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException("UnsupportedEncodingException: ", e);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("IOException in file " + filename, e);
+        }
+
+        return str.toString();
+    }
+
     public static boolean deleteFile(String filename) {
         try {
             return new File(filename).delete();
@@ -82,7 +101,7 @@ public final class Utils {
                 OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), "UTF8")
         ) {
 
-            for (String triple: triples) {
+            for (String triple : triples) {
                 out.write(triple + "\n");
             }
 
@@ -98,7 +117,7 @@ public final class Utils {
     /**
      * Decompresses the passed GZip file, and returns the filename of the decompressed file
      *
-     * @param filename             The filename of compressed file
+     * @param filename The filename of compressed file
      * @return The filename of the output file, or empty string if a problem occurs
      */
     public static String decompressGZipFile(String filename) {
@@ -149,7 +168,7 @@ public final class Utils {
         //Extract filename only without full path
         int lastSlashPos = fileURL.lastIndexOf('/');
         if (lastSlashPos < 0) {
-            return "";
+            return null;
         }
 
         String fullFileName = folderPath + fileURL.substring(lastSlashPos + 1);
@@ -163,20 +182,20 @@ public final class Utils {
         try {
             url = new URL(fileURL);
         } catch (MalformedURLException e) {
-            return "";
+            return null;
         }
 
         try (
-             ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-             FileOutputStream fos = new FileOutputStream(file);
+                ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+                FileOutputStream fos = new FileOutputStream(file);
         ) {
 
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 
         } catch (FileNotFoundException e) {
-            return "";
+            return null;
         } catch (IOException e) {
-            return "";
+            return null;
         }
 
         return fullFileName;

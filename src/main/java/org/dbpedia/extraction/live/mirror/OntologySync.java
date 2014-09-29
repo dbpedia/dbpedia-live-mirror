@@ -24,11 +24,12 @@ public final class OntologySync {
 
     public static void main(String[] args) {
 
-        if (args != null && args.length >= 1) {
+        if (args != null && args.length > 1) {
             logger.error("Incorrect arguments in Main. Must be zero or one of {Endless|Onetime}");
+            System.exit(1);
         }
         UpdateStrategy strategy = UpdateStrategy.Endless; // default value
-        if (args.length == 1) {
+        if (args != null && args.length == 1) {
             try {
                 strategy = UpdateStrategy.valueOf(args[0]);
             } catch (Exception e) {

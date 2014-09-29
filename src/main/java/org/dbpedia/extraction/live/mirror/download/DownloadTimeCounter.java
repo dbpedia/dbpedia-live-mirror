@@ -1,7 +1,5 @@
 package org.dbpedia.extraction.live.mirror.download;
 
-import org.dbpedia.extraction.live.mirror.helper.Global;
-
 import java.util.Calendar;
 
 /**
@@ -14,8 +12,6 @@ import java.util.Calendar;
  */
 public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
 
-    private final int maximumNumberOfSuccessiveFailedTrials;
-
     private int year;
     private int month;
     private int day;
@@ -23,13 +19,12 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     private int counter;
 
 
-    public DownloadTimeCounter(int year, int month, int day, int hour, int counter, int maximumNumberOfSuccessiveFailedTrials) {
+    public DownloadTimeCounter(int year, int month, int day, int hour, int counter) {
         this.year = year;
         this.month = month;
         this.day = day;
         this.hour = hour;
         this.counter = counter;
-        this.maximumNumberOfSuccessiveFailedTrials = maximumNumberOfSuccessiveFailedTrials;
     }
 
     public DownloadTimeCounter(DownloadTimeCounter downloadTimeCounter) {
@@ -38,17 +33,14 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
         this.day = downloadTimeCounter.day;
         this.hour = downloadTimeCounter.hour;
         this.counter = downloadTimeCounter.counter;
-        this.maximumNumberOfSuccessiveFailedTrials = downloadTimeCounter.maximumNumberOfSuccessiveFailedTrials;
     }
 
     /**
      * Constructs DownloadTimeCounter object from a string by splitting it using the hyphen "-"
      *
      * @param fullTimeString String containing full time path i.e. Year-Month-Day-Hour-Counter
-     * @param maximumNumberOfSuccessiveFailedTrials
      */
-    public DownloadTimeCounter(String fullTimeString, int maximumNumberOfSuccessiveFailedTrials) {
-        this.maximumNumberOfSuccessiveFailedTrials = maximumNumberOfSuccessiveFailedTrials;
+    public DownloadTimeCounter(String fullTimeString) {
         try {
             String[] dateParts = fullTimeString.split("-");
             this.year = Integer.parseInt(dateParts[0]);
@@ -68,7 +60,6 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
             this.counter = 0;
         }
     }
-
 
 
     /**
@@ -130,30 +121,20 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     }
 
     /**
-     * Advances to the next available step
-     *
-     * @return True if it advances successfully, false otherwise
+     * Advances to the next available patch (in the same hour
      */
-    public boolean advancePatch() {
-
-
-
-        //If the number of successive trials exceeds maximumNumberOfSuccessiveFailedTrials, then this indicates that no
-        // more files exist in that folder, and we should advancePatch hour with one, so we move onto another folder,
-        //and we should also reset counter
-        if (Global.getNumberOfSuccessiveFailedTrails() >= maximumNumberOfSuccessiveFailedTrials) {
-            Global.setNumberOfSuccessiveFailedTrails(0);
-            return advanceHour();
-        }
+    public void advancePatch() {
         counter++;
-        return true;
-
     }
 
-    private boolean advanceHour() {
+
+    /**
+     * Advances to the next hour and resets counter to 000000
+     */
+    public void advanceHour() {
 
         Calendar cal = Calendar.getInstance();
-        cal.set(year, month-1, day, hour, 0);
+        cal.set(year, month - 1, day, hour, 0);
         cal.add(Calendar.HOUR_OF_DAY, 1);
 
         this.year = cal.get(Calendar.YEAR);
@@ -161,9 +142,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
         this.day = cal.get(Calendar.DAY_OF_MONTH);
         this.hour = cal.get(Calendar.HOUR_OF_DAY);
         this.counter = 0;
-        return true;
 
     }
-
 
 }

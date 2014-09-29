@@ -1,10 +1,9 @@
 package org.dbpedia.extraction.live.mirror.download;
 
-import org.dbpedia.extraction.live.mirror.helper.Global;
+import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 
@@ -20,36 +19,17 @@ public final class LastDownloadDateManager {
 
     private static final Logger logger = LoggerFactory.getLogger(LastDownloadDateManager.class);
 
-    private LastDownloadDateManager() {}
+    private LastDownloadDateManager() {
+    }
 
     public static DownloadTimeCounter getLastDownloadDate(String strFileName) {
-        String strLastResponseDate = null;
-        FileInputStream fsLastResponseDateFile = null;
+        String strLastResponseDate = Utils.getFileAsString(strFileName).trim();
 
-        try {
-            fsLastResponseDateFile = new FileInputStream(strFileName);
-
-            int ch;
-            strLastResponseDate = "";
-            while ((ch = fsLastResponseDateFile.read()) != -1) {
-                strLastResponseDate += (char) ch;
-            }
-
-
-        } catch (Exception exp) {
-            throw new RuntimeException("Cannot read latest download date", exp);
-        } finally {
-            try {
-                if (fsLastResponseDateFile != null)
-                    fsLastResponseDateFile.close();
-
-            } catch (Exception exp) {
-                logger.warn("File " + strFileName + " cannot be closed due to " + exp.getMessage(), exp);
-            }
-
+        if (strLastResponseDate.isEmpty()) {
+            throw new RuntimeException("Cannot read latest download date from " + strFileName);
         }
 
-        return new DownloadTimeCounter(strLastResponseDate,  Integer.parseInt(Global.getOptions().get("MaximumNumberOfSuccessiveFailedTrials")));
+        return new DownloadTimeCounter(strLastResponseDate);
 
     }
 
