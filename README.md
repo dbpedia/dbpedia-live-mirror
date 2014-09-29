@@ -28,6 +28,8 @@ In order to execute from source, download the code from the repo
     3. `sh bin/ontologySync.sh` script that keeps the DBpedia ontology up-to-date
     4. `sh bin/ontologySync.sh Onetime` script that updates the DBpedia ontology to the latest version and exists
 
+Jar files are not distributed at the moment but will be on request.
+
 Dependencies
 =========
   1. Maven 3
