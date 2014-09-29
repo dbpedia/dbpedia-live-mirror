@@ -49,14 +49,10 @@ public class ChangesetCounter implements Comparable<ChangesetCounter> {
             this.counter = Integer.parseInt(dateParts[4]);
         }
         //If any error occurs, then we set it with current date
-        catch (Exception exp) {
+        catch (Exception e) {
 
-            Calendar cal = Calendar.getInstance();
-            this.year = cal.get(Calendar.YEAR);
-            this.month = cal.get(Calendar.MONTH) + 1;
-            this.day = cal.get(Calendar.DAY_OF_MONTH);
-            this.hour = cal.get(Calendar.HOUR_OF_DAY);
-            this.counter = 0;
+            throw new IllegalArgumentException("Cannot initialize Changeset counter from: " + fullTimeString +
+                    ". Possible cause local 'lastDownloadDate' or remote 'lastPublishedFile'", e);
         }
     }
 
