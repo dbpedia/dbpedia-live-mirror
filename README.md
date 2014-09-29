@@ -12,9 +12,8 @@ After downloading the file compressed file, it does the following:
 1- decompresses that file, in order to get the N-Triples file out of it.
 2- determines the purpose of that file, i.e. if the file name is XYZ.added.nt then it is for newly added triples, and if its name is XYZ.removed.nt then it 
    is for deleted triples.
-3- connects to the local Virtuoso server that should be synchronized with our DBpedia-Live, using login credentials written in "dbpedia_updates_downloader.ini".
+3- connects to the local Virtuoso server that should be synchronized with our DBpedia-Live, using login credentials written in "mirror-live.ini".
 4- uses the downloaded file to either add or delete triples from that store.
-5- optionally, deletes both compressed and decompressed files.
 
 Execution
 =========
@@ -28,10 +27,9 @@ In order to run the application do the following:
 
 Contact
 =======
-Mohamed Morsey
+Dimitris Kontokostas
 Department of Computer Science
 University of Leipzig
-morsey@informatik.uni-leipzig.de
 
 Licensing
 =========
