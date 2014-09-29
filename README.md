@@ -16,13 +16,22 @@ to create graph groups in VOS you can adapt and run [this script](https://github
 
 Execution
 =========
-In order to run the application do the following:
-1- Decompress the zipped file to any folder.
-2- Download and decompress the latest DBpedia-Live dump from "http://live.dbpedia.org/dumps/".
-3- Use virtload.sh script to load data from that file into your Virtuoso store.
-2- Set the start date in file "lastDownloadDate.dat" to the date of that dump, e.g. for dump file "dbpedia_2012_02_27.nt.bz2", set the date to 2012-02-27-00-000000.
-3- Set the configuration information in file "dbpedia_updates_downloader.ini", such as login credentials for Virtuoso, and GraphURI.
-4- Run "java -jar dbpintegrator-1.1.jar" on the command line.
+In order to execute from source, download the code from the repo
+`git clone https://github.com/dbpedia/dbpedia-live-mirror.git`
+
+  1. Setup your VOS instance and `mirror-live.ini` file.
+  2. Download and load the [latest dump](http://live.dbpedia.org/dumps/)
+  3. Copy `lastDownloadDate.dat.default' to `lastDownloadDate.dat` and adapt the date according to the dump file
+  3. run one of the scripts in the `bin/` folder
+    1. `sh bin/liveSync.sh` script that applies existing triple patches and waits until new ones get published 
+    2. `sh bin/liveSyncOnce.sh` (to be released soon) script that applies existing triple patches and exits.
+    3. `sh bin/ontologySync.sh` script that keeps the DBpedia ontology up-to-date
+    4. `sh bin/ontologySyncOnce.sh` script that updates the DBpedia ontology to the latest version and exists
+
+Dependencies
+=========
+  1. Maven 3
+  2. Java 7
 
 Contact
 =======
