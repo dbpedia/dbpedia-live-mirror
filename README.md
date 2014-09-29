@@ -24,9 +24,9 @@ In order to execute from source, download the code from the repo
   3. Copy `lastDownloadDate.dat.default' to `lastDownloadDate.dat` and adapt the date according to the dump file
   3. run one of the scripts in the `bin/` folder
     1. `sh bin/liveSync.sh` script that applies existing triple patches and waits until new ones get published 
-    2. `sh bin/liveSyncOnce.sh` (to be released soon) script that applies existing triple patches and exits.
+    2. `sh bin/liveSyncOnce.sh Onetime` (to be released soon) script that applies existing triple patches and exits.
     3. `sh bin/ontologySync.sh` script that keeps the DBpedia ontology up-to-date
-    4. `sh bin/ontologySyncOnce.sh` script that updates the DBpedia ontology to the latest version and exists
+    4. `sh bin/ontologySync.sh Onetime` script that updates the DBpedia ontology to the latest version and exists
 
 Dependencies
 =========
