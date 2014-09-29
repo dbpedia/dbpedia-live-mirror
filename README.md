@@ -26,10 +26,6 @@ In order to run the application do the following:
 
 Contact
 =======
-Dimitris Kontokostas
-Department of Computer Science
-University of Leipzig
+[DBpedia Developers mailing list](https://lists.sourceforge.net/lists/listinfo/dbpedia-developers)
 
-Licensing
-=========
-THIS PROGRAM IS DISTRIBUTED IN THE HOPE THAT IT WILL BE USEFUL, BUT WITHOUT ANY WARRANTY. IT IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.
+
