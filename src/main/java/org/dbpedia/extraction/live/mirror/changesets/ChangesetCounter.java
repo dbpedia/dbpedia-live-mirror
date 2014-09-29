@@ -1,16 +1,15 @@
-package org.dbpedia.extraction.live.mirror.download;
+package org.dbpedia.extraction.live.mirror.changesets;
 
 import java.util.Calendar;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Mohamed Morsey
- * Date: 5/26/11
- * Time: 12:22 AM
- * Handles the timing of download process, so it includes fields for year, month, day, hour, and also a counter that
- * is incremented within the hour itself.
+ * Tracks a reference to a changeset
+ * each chengeset is identified by year, month, day, hour, and a six digit counter
+ *
+ * @author Dimitris Kontokostas
+ * @since 9/25/14 11:05 AM
  */
-public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
+public class ChangesetCounter implements Comparable<ChangesetCounter> {
 
     private int year;
     private int month;
@@ -19,7 +18,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     private int counter;
 
 
-    public DownloadTimeCounter(int year, int month, int day, int hour, int counter) {
+    public ChangesetCounter(int year, int month, int day, int hour, int counter) {
         this.year = year;
         this.month = month;
         this.day = day;
@@ -27,12 +26,12 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
         this.counter = counter;
     }
 
-    public DownloadTimeCounter(DownloadTimeCounter downloadTimeCounter) {
-        this.year = downloadTimeCounter.year;
-        this.month = downloadTimeCounter.month;
-        this.day = downloadTimeCounter.day;
-        this.hour = downloadTimeCounter.hour;
-        this.counter = downloadTimeCounter.counter;
+    public ChangesetCounter(ChangesetCounter changesetCounter) {
+        this.year = changesetCounter.year;
+        this.month = changesetCounter.month;
+        this.day = changesetCounter.day;
+        this.hour = changesetCounter.hour;
+        this.counter = changesetCounter.counter;
     }
 
     /**
@@ -40,7 +39,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
      *
      * @param fullTimeString String containing full time path i.e. Year-Month-Day-Hour-Counter
      */
-    public DownloadTimeCounter(String fullTimeString) {
+    public ChangesetCounter(String fullTimeString) {
         try {
             String[] dateParts = fullTimeString.split("-");
             this.year = Integer.parseInt(dateParts[0]);
@@ -81,7 +80,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DownloadTimeCounter that = (DownloadTimeCounter) o;
+        ChangesetCounter that = (ChangesetCounter) o;
 
         if (counter != that.counter) return false;
         if (day != that.day) return false;
@@ -103,7 +102,7 @@ public class DownloadTimeCounter implements Comparable<DownloadTimeCounter> {
     }
 
     @Override
-    public int compareTo(DownloadTimeCounter that) {
+    public int compareTo(ChangesetCounter that) {
 
         if (this.year != that.year)
             return (new Integer(this.year)).compareTo(that.year);

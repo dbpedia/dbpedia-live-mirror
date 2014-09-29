@@ -1,5 +1,6 @@
 package org.dbpedia.extraction.live.mirror.download;
 
+import org.dbpedia.extraction.live.mirror.changesets.ChangesetCounter;
 import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +23,14 @@ public final class LastDownloadDateManager {
     private LastDownloadDateManager() {
     }
 
-    public static DownloadTimeCounter getLastDownloadDate(String strFileName) {
+    public static ChangesetCounter getLastDownloadDate(String strFileName) {
         String strLastResponseDate = Utils.getFileAsString(strFileName).trim();
 
         if (strLastResponseDate.isEmpty()) {
             throw new RuntimeException("Cannot read latest download date from " + strFileName);
         }
 
-        return new DownloadTimeCounter(strLastResponseDate);
+        return new ChangesetCounter(strLastResponseDate);
 
     }
 

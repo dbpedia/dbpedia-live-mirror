@@ -2,7 +2,7 @@ package org.dbpedia.extraction.live.mirror;
 
 import org.dbpedia.extraction.live.mirror.changesets.Changeset;
 import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
-import org.dbpedia.extraction.live.mirror.download.DownloadTimeCounter;
+import org.dbpedia.extraction.live.mirror.changesets.ChangesetCounter;
 import org.dbpedia.extraction.live.mirror.download.LastDownloadDateManager;
 import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.UpdateStrategy;
@@ -62,8 +62,8 @@ public final class LiveSync {
         long delayInSeconds = Long.parseLong(Global.getOptions().get("LiveUpdateInterval")) * 1000l;
 
         // Set latest applied patch
-        DownloadTimeCounter lastDownload = LastDownloadDateManager.getLastDownloadDate(LAST_DOWNLOAD);
-        DownloadTimeCounter currentCounter = new DownloadTimeCounter(lastDownload);
+        ChangesetCounter lastDownload = LastDownloadDateManager.getLastDownloadDate(LAST_DOWNLOAD);
+        ChangesetCounter currentCounter = new ChangesetCounter(lastDownload);
         currentCounter.advancePatch(); // move to next patch (this one is already applied
 
         // Download last published file from server
@@ -71,7 +71,7 @@ public final class LiveSync {
         String lastPublishFileRemote = updateServerAddress + lastPublishedFilename;
         Utils.downloadFile(lastPublishFileRemote, updatesDownloadFolder);
         String lastPublishFileLocal = updatesDownloadFolder + lastPublishedFilename;
-        DownloadTimeCounter remoteCounter = new DownloadTimeCounter(Utils.getFileAsString(lastPublishFileLocal));
+        ChangesetCounter remoteCounter = new ChangesetCounter(Utils.getFileAsString(lastPublishFileLocal));
 
         int missing_urls = 0;
         while (true) {
@@ -101,7 +101,7 @@ public final class LiveSync {
 
                 // code duplication
                 Utils.downloadFile(lastPublishFileRemote, updatesDownloadFolder);
-                remoteCounter = new DownloadTimeCounter(Utils.getFileAsString(lastPublishFileLocal));
+                remoteCounter = new ChangesetCounter(Utils.getFileAsString(lastPublishFileLocal));
 
                 //now we have an updated remote counter so next time this block will not run (if the updates are running)
                 continue;
