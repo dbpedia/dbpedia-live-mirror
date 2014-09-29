@@ -1,19 +1,18 @@
-Application Name: DBpedia Updates Integrator
-Version: 1.1
-Date: 05/03/2012
-Author: Mohamed Morsey, AKSW Group, University Of Leipzig, Germany
-Source: https://dbpintegrator.svn.sourceforge.net/svnroot/dbpintegrator
+DBpedia Live Mirror
+==========
 
-Description
-===========
-DBpedia-Live continuously generates zipped N-Triples files containing added/deleted triples upon its run.
-This tool starts downloading those files in order starting from start date stated in "lastDownloadDate.dat" file.
-After downloading the file compressed file, it does the following:
-1- decompresses that file, in order to get the N-Triples file out of it.
-2- determines the purpose of that file, i.e. if the file name is XYZ.added.nt then it is for newly added triples, and if its name is XYZ.removed.nt then it 
-   is for deleted triples.
-3- connects to the local Virtuoso server that should be synchronized with our DBpedia-Live, using login credentials written in "mirror-live.ini".
-4- uses the downloaded file to either add or delete triples from that store.
+[DBpedia-Live](http://live.dbpedia.org) continuously [generates zipped N-Triples files](http://live.dbpedia.org/changesets/) containing added/deleted triples upon its run.
+This tool starts downloading those files and updates a local Virtuoso triple store.
+
+VOS Setup
+=========
+DBpedia Live triple store update is happens on different Graphs and we have the following enabled:
+  1. `http://live.dbpedia.org`: contains real time extracted data from Wikipedia
+  2. `http://static.dbpedia.org`: contains external datasets and data that cannot be extracted from Wikipedia but is usefull to have.
+  3. `http://dbpedia.org/resource/classes#`: contains the up-to-date DBpedia ontology
+  4. `http://dbpedia.org`: virtual graph group that contains all the aforementioned graphs
+
+to create graph groups in VOS you can adapt and run [this script](https://github.com/dbpedia/dbpedia-documentation/blob/master/scripts/virtuoso/create_graph_groups.sql)
 
 Execution
 =========
