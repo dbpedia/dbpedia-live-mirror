@@ -6,7 +6,7 @@ This tool starts downloading those files and updates a local Virtuoso triple sto
 
 VOS Setup
 =========
-DBpedia Live triple store update is happens on different Graphs and we have the following enabled:
+DBpedia Live triple store update happens on different Graphs and we have the following enabled:
   1. `http://live.dbpedia.org`: contains real time extracted data from Wikipedia
   2. `http://static.dbpedia.org`: contains external datasets and data that cannot be extracted from Wikipedia but is usefull to have.
   3. `http://dbpedia.org/resource/classes#`: contains the up-to-date DBpedia ontology
