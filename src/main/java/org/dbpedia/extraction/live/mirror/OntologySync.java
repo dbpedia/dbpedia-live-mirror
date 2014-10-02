@@ -75,7 +75,7 @@ public final class OntologySync {
                 break;
             }
 
-            long timeout = updateInterval * 24l * 60l * 60l;
+            long timeout = updateInterval * 24l * 60l * 60l * 1000l;
 
             try {
                 Thread.sleep(timeout);
