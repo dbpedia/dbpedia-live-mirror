@@ -1,8 +1,8 @@
 package org.dbpedia.extraction.live.mirror;
 
 import org.dbpedia.extraction.live.mirror.changesets.Changeset;
-import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.changesets.ChangesetCounter;
+import org.dbpedia.extraction.live.mirror.changesets.ChangesetExecutor;
 import org.dbpedia.extraction.live.mirror.download.LastDownloadDateManager;
 import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.UpdateStrategy;
@@ -13,6 +13,7 @@ import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -59,6 +60,7 @@ public final class LiveSync {
         String updatesDownloadFolder = Global.getOptions().get("UpdatesDownloadFolder");
         String addedTriplesFileExtension = Global.getOptions().get("addedTriplesFileExtension");
         String removedTriplesFileExtension = Global.getOptions().get("removedTriplesFileExtension");
+        String clearTriplesFileExtension = Global.getOptions().get("clearTriplesFileExtension");
         long delayInSeconds = Long.parseLong(Global.getOptions().get("LiveUpdateInterval")) * 1000l;
 
         // Set latest applied patch
@@ -111,17 +113,20 @@ public final class LiveSync {
 
             String addedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + addedTriplesFileExtension;
             String deletedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + removedTriplesFileExtension;
+            String clearTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + clearTriplesFileExtension;
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
             List<String> triplesToAdd = Arrays.asList();
+            List<String> resourcesToClear = new LinkedList<>();
 
             //Download and decompress the file of deleted triples
             String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesURL, updatesDownloadFolder);
             String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesURL, updatesDownloadFolder);
+            String clearCompressedDownloadedFile = Utils.downloadFile(clearTriplesURL, updatesDownloadFolder);
 
             // Check for errors before proceeding
-            if (addedCompressedDownloadedFile == null && deletedCompressedDownloadedFile == null) {
+            if (addedCompressedDownloadedFile == null && deletedCompressedDownloadedFile == null && clearCompressedDownloadedFile == null) {
                 missing_urls++;
                 if (missing_urls >= ERRORS_TO_ADVANCE) {
                     // advance hour / day / month or year
@@ -132,16 +137,24 @@ public final class LiveSync {
             // URL works, reset missing URLs
             missing_urls = 0;
 
+            if (clearCompressedDownloadedFile != null) {
+
+                String file = Utils.decompressGZipFile(clearCompressedDownloadedFile);
+                List<String> temp_triples = Utils.getTriplesFromFile(file);
+                for (String triple : temp_triples) {
+                    String[] splittedTriple = triple.split("> <");
+                    String tmp_resource = splittedTriple[0];
+                    String resource = tmp_resource.substring(1);
+                    resourcesToClear.add(resource);
+                }
+                Utils.deleteFile(file);
+            }
 
             if (deletedCompressedDownloadedFile != null) {
 
-                String decompressedDeletedNTriplesFile = Utils.decompressGZipFile(deletedCompressedDownloadedFile);
-                triplesToDelete = Utils.getTriplesFromFile(decompressedDeletedNTriplesFile);
-
-                Utils.deleteFile(decompressedDeletedNTriplesFile);
-
-                //Reset the number of failed trails, since the file is found and downloaded successfully
-                Global.setNumberOfSuccessiveFailedTrails(0);
+                String file = Utils.decompressGZipFile(deletedCompressedDownloadedFile);
+                triplesToDelete = Utils.getTriplesFromFile(file);
+                Utils.deleteFile(file);
             }
 
 
@@ -150,12 +163,9 @@ public final class LiveSync {
                 triplesToAdd = Utils.getTriplesFromFile(decompressedAddedNTriplesFile);
 
                 Utils.deleteFile(decompressedAddedNTriplesFile);
-
-                //Reset the number of failed trails, since the file is found and downloaded successfully
-                Global.setNumberOfSuccessiveFailedTrails(0);
             }
 
-            Changeset changeset = new Changeset(currentCounter.toString(), triplesToAdd, triplesToDelete);
+            Changeset changeset = new Changeset(currentCounter.toString(), triplesToAdd, triplesToDelete, resourcesToClear);
             changesetExecutor.applyChangeset(changeset);
 
 

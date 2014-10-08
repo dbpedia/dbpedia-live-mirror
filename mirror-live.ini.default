@@ -15,7 +15,8 @@ UpdatesDownloadFolder   =   ./
 UpdateServerAddress = http://live.dbpedia.org/changesets/
 
 addedTriplesFileExtension  =   .added.nt.gz
-removedTriplesFileExtension =   .removed.nt.gz
+removedTriplesFileExtension =  .removed.nt.gz
+clearTriplesFileExtension =    .clear.nt.gz
 
 lastPublishedFilename   =   lastPublishedFile.txt
 

@@ -1,11 +1,9 @@
 package org.dbpedia.extraction.live.mirror.changesets;
 
-import org.dbpedia.extraction.live.mirror.helper.Global;
 import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULException;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULExecutor;
 import org.dbpedia.extraction.live.mirror.sparul.SPARULGenerator;
-import org.dbpedia.extraction.live.mirror.sparul.SPARULVosExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,25 +26,48 @@ public class ChangesetExecutor {
 
     private enum Action {ADD, DELETE}
 
-    public ChangesetExecutor(SPARULExecutor sparulExecutor, SPARULGenerator sparulGenerator){
+    public ChangesetExecutor(SPARULExecutor sparulExecutor, SPARULGenerator sparulGenerator) {
         this.sparulExecutor = sparulExecutor;
         this.sparulGenerator = sparulGenerator;
     }
 
     public void applyChangeset(Changeset changeset) {
 
+        // First clear resources (if any)
+        if (changeset.triplesCleared() > 0) {
+            executeClearResources(changeset.getCleared());
+            logger.info("Patch " + changeset.getId() + " CLEARED " + changeset.triplesCleared() + " resources");
+        }
+
         // Deletions must be executed before additions
 
-        executeAction(changeset.getDeletions(), Action.DELETE);
-        logger.info("Patch " + changeset.getId() + " DELETED " + changeset.triplesDeleted() + " triples");
+        if (changeset.triplesDeleted() > 0) {
+            executeAction(changeset.getDeletions(), Action.DELETE);
+            logger.info("Patch " + changeset.getId() + " DELETED " + changeset.triplesDeleted() + " triples");
+        }
 
-        executeAction(changeset.getAdditions(), Action.ADD);
-        logger.info("Patch " + changeset.getId() + " ADDED " + changeset.triplesAdded() + " triples");
+        if (changeset.triplesAdded() > 0) {
+            executeAction(changeset.getAdditions(), Action.ADD);
+            logger.info("Patch " + changeset.getId() + " ADDED " + changeset.triplesAdded() + " triples");
+        }
 
     }
 
     public void clearGraph() {
         executeSparulWrapper(sparulGenerator.clearGraph());
+    }
+
+    private boolean executeClearResources(Collection<String> resources) {
+        boolean status = true;
+        for (String resource : resources) {
+            boolean result = executeSparulWrapper(sparulGenerator.deleteResource(resource));
+            if (!result) {
+                logger.error("Could not clear triples for <" + resource + ">");
+            }
+            status = status && result;
+
+        }
+        return status;
     }
 
 

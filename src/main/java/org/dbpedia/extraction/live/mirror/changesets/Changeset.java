@@ -14,13 +14,15 @@ public final class Changeset {
     private final String id;
     private final Collection<String> additions;
     private final Collection<String> deletions;
+    private final Collection<String> cleared;
 
-    public Changeset(String id, Collection<String> additions, Collection<String> deletions) {
+    public Changeset(String id, Collection<String> additions, Collection<String> deletions, Collection<String> cleared) {
         this.id = id;
 
         // Keep the changeset unique
         this.additions = Collections.unmodifiableCollection(new LinkedHashSet<>(additions));
         this.deletions = Collections.unmodifiableCollection(new LinkedHashSet<>(deletions));
+        this.cleared = Collections.unmodifiableCollection(new LinkedHashSet<>(cleared));
     }
 
     public String getId() {
@@ -41,5 +43,13 @@ public final class Changeset {
 
     public int triplesDeleted() {
         return deletions.size();
+    }
+
+    public int triplesCleared() {
+        return cleared.size();
+    }
+
+    public Collection<String> getCleared() {
+        return cleared;
     }
 }

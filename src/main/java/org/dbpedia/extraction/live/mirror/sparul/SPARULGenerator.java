@@ -22,6 +22,15 @@ public class SPARULGenerator {
         return generate(triples, false);
     }
 
+    public String deleteResource(String resource) {
+        return "DELETE FROM <" + graph + "> {" +
+                "  ?s ?p ?o" +
+                " } WHERE {" +
+                "  ?s ?p ?o." +
+                "  FILTER ( ?s = <" + resource + ">)" +
+                "}";
+    }
+
     public String clearGraph() {
         return "CLEAR GRAPH <" + graph + "> ";
     }

@@ -52,7 +52,7 @@ public class OntologyHandler {
         deletions.removeAll(remote);
 
 
-        return new Changeset("Ontology-" + Utils.getTimestamp(), insertions, deletions);
+        return new Changeset("Ontology-" + Utils.getTimestamp(), insertions, deletions, new ArrayList<String>());
     }
 
     private List<String> getRemoteOntologyTriples() {
@@ -68,7 +68,7 @@ public class OntologyHandler {
             String ontology = os.toString("UTF8");
 
             triples = new ArrayList<>();
-            for (String t: ontology.split("\n")) {
+            for (String t : ontology.split("\n")) {
                 triples.add(t.trim());
             }
             Collections.sort(triples);
@@ -91,7 +91,7 @@ public class OntologyHandler {
         return triples;
     }
 
-    public void saveOntology(){
+    public void saveOntology() {
         if (remote != null) {
             Utils.writeTriplesToFile(remote, ontologyFilename);
         }
