@@ -14,15 +14,13 @@ import java.io.File;
  * To change this template use File | Settings | File Templates.
  */
 public final class Global {
+    private static final Logger logger = LoggerFactory.getLogger(Global.class);
 
     private static Options options;
-    private static int numberOfSuccessiveFailedTrails;
-
-    private static final Logger logger = LoggerFactory.getLogger(Global.class);
 
     static {
         try {
-            Global.options = new Options(new File("mirror-live.ini"));
+            setOptions(new Options(new File("mirror-live.ini")));
             logger.info("Options file read successfully");
         } catch (Exception exp) {
             logger.error("Options file cannot be read, download process cannot continue", exp);
@@ -38,13 +36,5 @@ public final class Global {
 
     public static void setOptions(Options options) {
         Global.options = options;
-    }
-
-    public static int getNumberOfSuccessiveFailedTrails() {
-        return numberOfSuccessiveFailedTrails;
-    }
-
-    public static void setNumberOfSuccessiveFailedTrails(int numberOfSuccessiveFailedTrails) {
-        Global.numberOfSuccessiveFailedTrails = numberOfSuccessiveFailedTrails;
     }
 }
