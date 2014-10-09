@@ -63,8 +63,11 @@ public final class OntologySync {
             Changeset changeset = ontology.getChangeset();
 
             if (changeset != null) {
-                changesetExecutor.applyChangeset(changeset);
-                ontology.saveOntology();
+                if (changesetExecutor.applyChangeset(changeset)) {
+                    ontology.saveOntology();
+                } else {
+                    logger.error("Error writing ontology, will try again later...");
+                }
             }
             else {
                 logger.error("Error creating changeset, probably cannot download ontology, skipping...");
