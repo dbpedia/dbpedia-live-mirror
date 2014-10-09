@@ -81,6 +81,7 @@ public final class OntologySync {
             long timeout = updateInterval * 24l * 60l * 60l * 1000l;
 
             try {
+                logger.info("Sleepping for " + updateInterval + " days...");
                 Thread.sleep(timeout);
             } catch (InterruptedException e) {
                 logger.warn("InterruptedException", e);
