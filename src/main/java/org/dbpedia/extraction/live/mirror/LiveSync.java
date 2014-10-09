@@ -33,6 +33,10 @@ public final class LiveSync {
 
     private static final int ERRORS_TO_ADVANCE = 3;
 
+    private static final String EXTENSION_ADDED =  ".added.nt.gz";
+    private static final String EXTENSION_REMOVED =  ".removed.nt.gz";
+    private static final String EXTENSION_CLEAR = ".clear.nt.gz";
+
     private LiveSync() {
     }
 
@@ -58,9 +62,6 @@ public final class LiveSync {
         // Variable init from ini file
         String updateServerAddress = Global.getOptions().get("UpdateServerAddress");
         String updatesDownloadFolder = Global.getOptions().get("UpdatesDownloadFolder");
-        String addedTriplesFileExtension = Global.getOptions().get("addedTriplesFileExtension");
-        String removedTriplesFileExtension = Global.getOptions().get("removedTriplesFileExtension");
-        String clearTriplesFileExtension = Global.getOptions().get("clearTriplesFileExtension");
         long delayInSeconds = Long.parseLong(Global.getOptions().get("LiveUpdateInterval")) * 1000l;
 
         // Set latest applied patch
@@ -111,9 +112,9 @@ public final class LiveSync {
             }
 
 
-            String addedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + addedTriplesFileExtension;
-            String deletedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + removedTriplesFileExtension;
-            String clearTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + clearTriplesFileExtension;
+            String addedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_ADDED;
+            String deletedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_REMOVED;
+            String clearTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_CLEAR;
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
