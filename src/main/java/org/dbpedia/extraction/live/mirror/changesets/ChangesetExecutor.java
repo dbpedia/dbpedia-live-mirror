@@ -31,25 +31,32 @@ public class ChangesetExecutor {
         this.sparulGenerator = sparulGenerator;
     }
 
-    public void applyChangeset(Changeset changeset) {
+    public boolean applyChangeset(Changeset changeset) {
+
+        boolean status = true;
 
         // First clear resources (if any)
         if (changeset.triplesCleared() > 0) {
-            executeClearResources(changeset.getCleared());
+            boolean status_c = executeClearResources(changeset.getCleared());
             logger.info("Patch " + changeset.getId() + " CLEARED " + changeset.triplesCleared() + " resources");
+            status = status && status_c;
         }
 
         // Deletions must be executed before additions
 
         if (changeset.triplesDeleted() > 0) {
-            executeAction(changeset.getDeletions(), Action.DELETE);
+            boolean status_d = executeAction(changeset.getDeletions(), Action.DELETE);
             logger.info("Patch " + changeset.getId() + " DELETED " + changeset.triplesDeleted() + " triples");
+            status = status && status_d;
         }
 
         if (changeset.triplesAdded() > 0) {
-            executeAction(changeset.getAdditions(), Action.ADD);
+            boolean status_a = executeAction(changeset.getAdditions(), Action.ADD);
             logger.info("Patch " + changeset.getId() + " ADDED " + changeset.triplesAdded() + " triples");
+            status = status && status_a;
         }
+
+        return status;
 
     }
 
