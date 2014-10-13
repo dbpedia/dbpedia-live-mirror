@@ -101,18 +101,18 @@ public class ChangesetCounter implements Comparable<ChangesetCounter> {
     public int compareTo(ChangesetCounter that) {
 
         if (this.year != that.year)
-            return (new Integer(this.year)).compareTo(that.year);
+            return (Integer.valueOf(this.year)).compareTo(that.year);
 
         if (this.month != that.month)
-            return (new Integer(this.month)).compareTo(that.month);
+            return (Integer.valueOf(this.month)).compareTo(that.month);
 
         if (this.day != that.day)
-            return (new Integer(this.day)).compareTo(that.day);
+            return (Integer.valueOf(this.day)).compareTo(that.day);
 
         if (this.hour != that.hour)
-            return (new Integer(this.hour)).compareTo(that.hour);
+            return (Integer.valueOf(this.hour)).compareTo(that.hour);
 
-        return (new Integer(this.counter)).compareTo(that.counter);
+        return (Integer.valueOf(this.counter)).compareTo(that.counter);
     }
 
     /**
