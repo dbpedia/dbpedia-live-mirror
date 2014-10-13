@@ -5,8 +5,7 @@ import org.dbpedia.extraction.live.mirror.helper.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,26 +34,14 @@ public final class LastDownloadDateManager {
     }
 
     public static void writeLastDownloadDate(String strFileName, String strLastResponseDate) {
-        FileOutputStream fsLastResponseDateFile = null;
-        OutputStreamWriter osWriter = null;
 
-        try {
-            fsLastResponseDateFile = new FileOutputStream(strFileName);
-            osWriter = new OutputStreamWriter(fsLastResponseDateFile);
+        try (OutputStreamWriter osWriter = new OutputStreamWriter(new FileOutputStream(strFileName), "UTF8");) {
+
             osWriter.write(strLastResponseDate);
             osWriter.flush();
-        } catch (Exception exp) {
-            logger.warn("Last download date cannot be written to file : " + strLastResponseDate + ", due to " + exp, exp);
-        } finally {
-            try {
-                if (osWriter != null)
-                    osWriter.close();
 
-                if (fsLastResponseDateFile != null)
-                    fsLastResponseDateFile.close();
-            } catch (Exception exp) {
-                logger.warn("File " + strFileName + " cannot be closed due to " + exp.getMessage(), exp);
-            }
+        } catch (IOException e) {
+            logger.warn("Last download date cannot be written to file : " + strLastResponseDate, e);
         }
     }
 }
