@@ -99,7 +99,7 @@ public final class LiveSync {
                 try {
                     Thread.sleep(delayInSeconds);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.warn("Could not sleep...", e);
                 }
 
                 // code duplication

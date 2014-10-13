@@ -70,7 +70,7 @@ public final class JDBCPoolConnection {
             try {
                 connectionPool.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Cannot close connection pool", e);
             }
         }
 
