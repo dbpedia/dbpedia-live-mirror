@@ -158,7 +158,7 @@
 
         <repository>
             <id>aksw</id>
-            <url>http://maven.aksw.org/archiva/repository/internal</url>
+            <url>http://maven.aksw.org/archiva/repository</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
