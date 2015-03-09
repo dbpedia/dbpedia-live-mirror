@@ -52,7 +52,7 @@ public class OntologyHandler {
         deletions.removeAll(remote);
 
 
-        return new Changeset("Ontology-" + Utils.getTimestamp(), insertions, deletions, new ArrayList<String>());
+        return new Changeset("Ontology-" + Utils.getTimestamp(), insertions, deletions, new ArrayList<String>(), new ArrayList<String>());
     }
 
     private List<String> getRemoteOntologyTriples() {

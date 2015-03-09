@@ -36,6 +36,7 @@ public final class LiveSync {
     private static final String EXTENSION_ADDED =  ".added.nt.gz";
     private static final String EXTENSION_REMOVED =  ".removed.nt.gz";
     private static final String EXTENSION_CLEAR = ".clear.nt.gz";
+    private static final String EXTENSION_REINSERT = ".reinserted.nt.gz ";
 
     private LiveSync() {
     }
@@ -115,19 +116,22 @@ public final class LiveSync {
             String addedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_ADDED;
             String deletedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_REMOVED;
             String clearTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_CLEAR;
+            String reinsertTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_REINSERT;
 
             // changesets default to empty
             List<String> triplesToDelete = Arrays.asList();
             List<String> triplesToAdd = Arrays.asList();
             List<String> resourcesToClear = new LinkedList<>();
+            List<String> triplesToReInsert = new LinkedList<>();
 
             //Download and decompress the file of deleted triples
             String addedCompressedDownloadedFile = Utils.downloadFile(addedTriplesURL, updatesDownloadFolder);
             String deletedCompressedDownloadedFile = Utils.downloadFile(deletedTriplesURL, updatesDownloadFolder);
             String clearCompressedDownloadedFile = Utils.downloadFile(clearTriplesURL, updatesDownloadFolder);
+            String reinsertCompressedDownloadedFile = Utils.downloadFile(reinsertTriplesURL, updatesDownloadFolder);
 
             // Check for errors before proceeding
-            if (addedCompressedDownloadedFile == null && deletedCompressedDownloadedFile == null && clearCompressedDownloadedFile == null) {
+            if (addedCompressedDownloadedFile == null && deletedCompressedDownloadedFile == null && clearCompressedDownloadedFile == null && reinsertCompressedDownloadedFile == null) {
                 missing_urls++;
                 if (missing_urls >= ERRORS_TO_ADVANCE) {
                     // advance hour / day / month or year
@@ -166,7 +170,14 @@ public final class LiveSync {
                 Utils.deleteFile(decompressedAddedNTriplesFile);
             }
 
-            Changeset changeset = new Changeset(currentCounter.toString(), triplesToAdd, triplesToDelete, resourcesToClear);
+            if (reinsertCompressedDownloadedFile != null) {
+                String decompressedReInsertNTriplesFile= Utils.decompressGZipFile(reinsertCompressedDownloadedFile);
+                triplesToReInsert = Utils.getTriplesFromFile(decompressedReInsertNTriplesFile);
+
+                Utils.deleteFile(decompressedReInsertNTriplesFile);
+            }
+
+            Changeset changeset = new Changeset(currentCounter.toString(), triplesToAdd, triplesToDelete, resourcesToClear, triplesToReInsert);
             changesetExecutor.applyChangeset(changeset);
 
 

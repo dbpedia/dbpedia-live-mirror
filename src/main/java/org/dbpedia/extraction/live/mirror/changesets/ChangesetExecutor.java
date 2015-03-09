@@ -56,6 +56,12 @@ public class ChangesetExecutor {
             status = status && status_a;
         }
 
+        if (changeset.triplesReinserted() > 0) {
+            boolean status_a = executeAction(changeset.getReinserted(), Action.ADD);
+            logger.info("Patch " + changeset.getId() + " REINSERTED " + changeset.triplesReinserted() + " resources");
+            status = status && status_a;
+        }
+
         return status;
 
     }

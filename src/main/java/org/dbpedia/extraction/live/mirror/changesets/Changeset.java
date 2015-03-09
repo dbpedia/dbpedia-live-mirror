@@ -15,14 +15,16 @@ public final class Changeset {
     private final Collection<String> additions;
     private final Collection<String> deletions;
     private final Collection<String> cleared;
+    private final Collection<String> reinserted;
 
-    public Changeset(String id, Collection<String> additions, Collection<String> deletions, Collection<String> cleared) {
+    public Changeset(String id, Collection<String> additions, Collection<String> deletions, Collection<String> cleared, Collection<String> reinserted) {
         this.id = id;
 
         // Keep the changeset unique
         this.additions = Collections.unmodifiableCollection(new LinkedHashSet<>(additions));
         this.deletions = Collections.unmodifiableCollection(new LinkedHashSet<>(deletions));
         this.cleared = Collections.unmodifiableCollection(new LinkedHashSet<>(cleared));
+        this.reinserted = Collections.unmodifiableCollection(new LinkedHashSet<>(reinserted));
     }
 
     public String getId() {
@@ -49,7 +51,15 @@ public final class Changeset {
         return cleared.size();
     }
 
+    public int triplesReinserted() {
+        return reinserted.size();
+    }
+
     public Collection<String> getCleared() {
         return cleared;
+    }
+
+    public Collection<String> getReinserted() {
+        return reinserted;
     }
 }
