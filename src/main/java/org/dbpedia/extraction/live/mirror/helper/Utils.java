@@ -31,7 +31,11 @@ public final class Utils {
     public static List<String> getTriplesFromFile(String filename) {
         List<String> lines = new ArrayList<>();
 
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"))) {
+        try (
+                FileInputStream fileInputStream= new FileInputStream(filename);
+                InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream, "UTF-8");
+                BufferedReader in = new BufferedReader(inputStreamReader)
+        ) {
 
             String line;
             while ((line = in.readLine()) != null) {
@@ -58,7 +62,10 @@ public final class Utils {
     public static String getFileAsString(String filename) {
         StringBuilder str = new StringBuilder();
 
-        try (InputStreamReader in = new InputStreamReader(new FileInputStream(filename), "UTF-8")) {
+        try (
+                FileInputStream fileInputStream= new FileInputStream(filename);
+                InputStreamReader in = new InputStreamReader(fileInputStream, "UTF-8")
+        ) {
             int ch;
             while ((ch = in.read()) != -1) {
                 str.append((char) ch);
@@ -76,7 +83,9 @@ public final class Utils {
 
     public static boolean deleteFile(String filename) {
         try {
-            return new File(filename).delete();
+            File file = new File(filename);
+            boolean retVal = file.delete();
+            return retVal;
         } catch (Exception e) {
             return false;
         }
@@ -98,7 +107,8 @@ public final class Utils {
     public static boolean writeTriplesToFile(List<String> triples, String filename) {
 
         try (
-                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(filename), "UTF8")
+                FileOutputStream fileOutputStream = new FileOutputStream(filename);
+                OutputStreamWriter out = new OutputStreamWriter(fileOutputStream, "UTF8")
         ) {
 
             for (String triple : triples) {

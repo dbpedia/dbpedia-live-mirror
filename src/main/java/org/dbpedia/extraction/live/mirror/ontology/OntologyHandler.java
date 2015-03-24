@@ -58,11 +58,12 @@ public class OntologyHandler {
     private List<String> getRemoteOntologyTriples() {
         List<String> triples = null;
 
-        try {
+        try (
+                final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ){
             Model model = ModelFactory.createDefaultModel();
             model.read(ontologyURI);
 
-            final ByteArrayOutputStream os = new ByteArrayOutputStream();
             model.write(os, "N-TRIPLE");
 
             String ontology = os.toString("UTF8");

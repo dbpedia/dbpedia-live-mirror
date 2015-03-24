@@ -35,7 +35,10 @@ public final class LastDownloadDateManager {
 
     public static void writeLastDownloadDate(String strFileName, String strLastResponseDate) {
 
-        try (OutputStreamWriter osWriter = new OutputStreamWriter(new FileOutputStream(strFileName), "UTF8");) {
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(strFileName);
+                OutputStreamWriter osWriter = new OutputStreamWriter(fileOutputStream, "UTF8");
+        ) {
 
             osWriter.write(strLastResponseDate);
             osWriter.flush();
