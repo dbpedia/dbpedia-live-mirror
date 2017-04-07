@@ -38,7 +38,7 @@ public final class JDBCPoolConnection {
             config.setPassword(Global.getOptions().get("Store.pw"));
             connectionPool = new BoneCP(config); // setup the connection pool
         } catch (Exception e) {
-            logger.error("Could not initialize Triple-Store connection! Exiting...");
+            logger.error("Could not initialize Triple-Store connection! Exiting ...", e);
             System.exit(1);
         }
     }

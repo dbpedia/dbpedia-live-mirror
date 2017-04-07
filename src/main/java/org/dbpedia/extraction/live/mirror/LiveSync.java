@@ -33,8 +33,8 @@ public final class LiveSync {
 
     private static final int ERRORS_TO_ADVANCE = 3;
 
-    private static final String EXTENSION_ADDED =  ".added.nt.gz";
-    private static final String EXTENSION_REMOVED =  ".removed.nt.gz";
+    private static final String EXTENSION_ADDED = ".added.nt.gz";
+    private static final String EXTENSION_REMOVED = ".removed.nt.gz";
     private static final String EXTENSION_CLEAR = ".clear.nt.gz";
     private static final String EXTENSION_REINSERT = ".reinserted.nt.gz ";
 
@@ -111,7 +111,6 @@ public final class LiveSync {
                 continue;
 
             }
-
 
             String addedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_ADDED;
             String deletedTriplesURL = updateServerAddress + currentCounter.getFormattedFilePath() + EXTENSION_REMOVED;
