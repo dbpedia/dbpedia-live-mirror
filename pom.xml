@@ -75,7 +75,6 @@
             <artifactId>jena-core</artifactId>
             <version>${org-apache-jena-version}</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -86,7 +85,6 @@
                 <artifactId>maven-dependency-plugin</artifactId>
             </plugin>
 
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -96,6 +94,7 @@
                     <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -151,11 +150,9 @@
                 </executions>
             </plugin>
         </plugins>
-
     </build>
 
     <repositories>
-
         <repository>
             <id>aksw</id>
             <url>http://maven.aksw.org/repository/internal</url>
@@ -163,7 +160,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-
     </repositories>
 
 </project>

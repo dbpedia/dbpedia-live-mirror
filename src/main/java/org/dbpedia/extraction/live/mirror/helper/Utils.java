@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
@@ -195,15 +196,24 @@ public final class Utils {
             return null;
         }
 
-        try (
-                ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+        try {
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            if (conn.getResponseCode() != 200) {
+                conn.getErrorStream().read();
+                conn.disconnect();
+                return null;
+            }
+            InputStream in = conn.getInputStream();
+            Closeable res = in;
+            try {
+                ReadableByteChannel rbc = Channels.newChannel(in);
                 FileOutputStream fos = new FileOutputStream(file);
-        ) {
 
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-
-        } catch (FileNotFoundException e) {
-            return null;
+                fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+            } finally {
+                res.close();
+                conn.disconnect();
+            }
         } catch (IOException e) {
             return null;
         }
