@@ -12,7 +12,9 @@ LiveGraphURI = http://live.dbpedia.org
 ; Temporary folder to use for downloading & extracting files
 UpdatesDownloadFolder   =   ./
 
-UpdateServerAddress = http://live.dbpedia.org/changesets/
+; UpdateServerAddress = http://live.dbpedia.org/changesets/
+; UpdateServerAddress = http://downloads.dbpedia.org/live/changesets/
+
 
 lastPublishedFilename   =   lastPublishedFile.txt
 
